@@ -18,7 +18,7 @@ import apiCall from 'src/utils/api';
 import { styled } from '@mui/material/styles';
 import { FormControlLabel } from '@mui/material';
 import { Switch } from '@mui/material';
-
+   
 const privacyOptions = [
   { value: 'SELF_ONLY', label: 'Private' },
   { value: 'FRIENDS', label: 'Friends' },
