@@ -1,0 +1,1 @@
+export {default as TikTokPostUpload} from './tikTokUi';

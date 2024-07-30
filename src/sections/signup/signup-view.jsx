@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import toast from 'react-hot-toast';
 import { useNavigate, Link } from 'react-router-dom';
-
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
@@ -13,45 +12,58 @@ import IconButton from '@mui/material/IconButton';
 import LoadingButton from '@mui/lab/LoadingButton';
 import { alpha, useTheme } from '@mui/material/styles';
 import InputAdornment from '@mui/material/InputAdornment';
-
-import apiCall from 'src/utils/api';
-
-import { bgGradient } from 'src/theme/css';
-
+import { CSSTransition } from 'react-transition-group';
 import Iconify from 'src/components/iconify';
-
-// ----------------------------------------------------------------------
+import SecondProfileStep from './profileStep';
+import { bgGradient } from 'src/theme/css';  // Import the bgGradient function
+import './transitionStyles.css';  // Add this import
 
 export default function SignUpView() {
   const theme = useTheme();
-  const navigate = useNavigate(); // Updated to useNavigate
+  const navigate = useNavigate();
+  
 
   const [showPassword, setShowPassword] = useState(false);
   const [signUpPassword, setSignUpPassword] = useState('');
   const [signUpEmail, setSignUpEmail] = useState('');
-  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [step, setStep] = useState(false);
+
+  const handleFacebookAuth = () => {
+    const loaderId = toast.loading("Redirecting...");
+    setTimeout(() => {
+      toast.dismiss(loaderId);
+      toast.success("Redirecting to Facebook...");
+    }, 5000);
+    navigate('/facebook/auth');
+  };
+
+  const handleGoogleAuth = () => {
+    setTimeout(() => {
+      const loaderId = toast.loading("Redirecting...");
+      toast.dismiss(loaderId);
+      toast.success("Redirecting to Google...");
+    }, 5000);
+    navigate('/google/auth');
+  };
 
   const handleClick = async () => {
     if (!signUpEmail || !signUpPassword) {
       toast.error("Please fill in all fields");
-      console.log(data);
       return;
     }
-
-    toast.loading("Submitting signup...");
-    navigate('/'); // Navigate to home after signup
-    // Simulate async request
-    try {
-      const response = await apiCall('get', '/api/example');
-      setData(response);
-    } catch (error) {
-      console.error('Error fetching data:', error);
+    else{
+      setStep(true);
+      const id=toast.loading("Redirecting to step....")
+      setTimeout(()=>{
+        toast.dismiss(id)
+      })
     }
 
-    setTimeout(() => {
-      toast.dismiss();
-      toast.success("Submitted Successfully");
-    }, 2000);
+  };
+
+  const handleBack = () => {
+    setStep(false);
   };
 
   const renderForm = (
@@ -88,13 +100,18 @@ export default function SignUpView() {
         variant="contained"
         color="inherit"
         onClick={handleClick}
+        loading={loading}
+        disabled={loading}
       >
-        Sign Up
+        Continue
       </LoadingButton>
     </>
   );
 
   return (
+    <>
+    {!step &&(
+
     <Box
       sx={{
         ...bgGradient({
@@ -102,6 +119,7 @@ export default function SignUpView() {
           imgUrl: '/assets/background/overlay_4.jpg',
         }),
         height: 1,
+        background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgba(0, 0, 0, 0.8) 100%)',
       }}
     >
       <Stack alignItems="center" justifyContent="center" sx={{ height: 1 }}>
@@ -110,6 +128,7 @@ export default function SignUpView() {
             p: 5,
             width: 1,
             maxWidth: 420,
+            position: 'relative',  // Make sure the back button is positioned correctly
           }}
         >
           <Typography variant="h4">Sign Up To Curator 365</Typography>
@@ -119,11 +138,11 @@ export default function SignUpView() {
             <Link to="/login" variant="subtitle2" sx={{ ml: 0.5 }}>
               Log In
             </Link>
-           
           </Typography>
 
           <Stack direction="row" spacing={2}>
             <Button
+              onClick={handleGoogleAuth}
               fullWidth
               size="large"
               color="inherit"
@@ -134,6 +153,7 @@ export default function SignUpView() {
             </Button>
 
             <Button
+              onClick={handleFacebookAuth}
               fullWidth
               size="large"
               color="inherit"
@@ -141,16 +161,6 @@ export default function SignUpView() {
               sx={{ borderColor: alpha(theme.palette.grey[500], 0.16) }}
             >
               <Iconify icon="eva:facebook-fill" color="#1877F2" />
-            </Button>
-
-            <Button
-              fullWidth
-              size="large"
-              color="inherit"
-              variant="outlined"
-              sx={{ borderColor: alpha(theme.palette.grey[500], 0.16) }}
-            >
-              <Iconify icon="eva:twitter-fill" color="#1C9CEA" />
             </Button>
           </Stack>
 
@@ -160,9 +170,44 @@ export default function SignUpView() {
             </Typography>
           </Divider>
 
-          {renderForm}
+          <CSSTransition
+            in={!step}
+            timeout={300}
+            classNames="fade"
+            unmountOnExit
+          >
+            {renderForm}
+          </CSSTransition>
+
+          
         </Card>
       </Stack>
     </Box>
+    )}
+   
+   
+   {step && (
+     <Box>
+    <CSSTransition
+      in={step}
+      timeout={300}
+      classNames="fade"
+      unmountOnExit
+    >
+      <Box>
+        <IconButton
+          onClick={handleBack}
+          sx={{ position: 'absolute', top: 16, left: 16 }}
+        >
+          <Iconify icon="eva:arrow-back-fill" />
+        </IconButton>
+        <Divider>
+          <SecondProfileStep email={signUpEmail} password={signUpPassword} />
+        </Divider>
+      </Box>
+    </CSSTransition>
+  </Box>
+  )}
+    </>
   );
 }

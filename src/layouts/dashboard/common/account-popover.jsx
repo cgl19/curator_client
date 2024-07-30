@@ -1,5 +1,5 @@
 import { useState } from 'react';
-
+import { useNavigate } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import Avatar from '@mui/material/Avatar';
 import Divider from '@mui/material/Divider';
@@ -10,28 +10,19 @@ import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 
 import { account } from 'src/_mock/account';
-
-// ----------------------------------------------------------------------
+import toast from 'react-hot-toast';
 
 const MENU_OPTIONS = [
   {
-    label: 'Home',
-    icon: 'eva:home-fill',
-  },
-  {
     label: 'Profile',
     icon: 'eva:person-fill',
-  },
-  {
-    label: 'Settings',
-    icon: 'eva:settings-2-fill',
+    path: '/profile', // Add the path for the profile page
   },
 ];
 
-// ----------------------------------------------------------------------
-
 export default function AccountPopover() {
   const [open, setOpen] = useState(null);
+  const navigate = useNavigate();
 
   const handleOpen = (event) => {
     setOpen(event.currentTarget);
@@ -40,6 +31,17 @@ export default function AccountPopover() {
   const handleClose = () => {
     setOpen(null);
   };
+
+  const handleMenuItemClick = (path) => {
+    handleClose();
+    navigate(path);
+  };
+
+  const handleLogout =()=>{
+    toast.success("Logging out successfully!")
+    navigate('/logout')
+    handleClose()
+  }
 
   return (
     <>
@@ -95,17 +97,15 @@ export default function AccountPopover() {
         <Divider sx={{ borderStyle: 'dashed' }} />
 
         {MENU_OPTIONS.map((option) => (
-          <MenuItem key={option.label} onClick={handleClose}>
+          <MenuItem key={option.label} onClick={() => handleMenuItemClick(option.path)}>
             {option.label}
           </MenuItem>
         ))}
 
-        <Divider sx={{ borderStyle: 'dashed', m: 0 }} />
-
         <MenuItem
           disableRipple
           disableTouchRipple
-          onClick={handleClose}
+          onClick={handleLogout}
           sx={{ typography: 'body2', color: 'error.main', py: 1.5 }}
         >
           Logout

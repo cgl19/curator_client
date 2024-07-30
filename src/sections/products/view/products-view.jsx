@@ -28,7 +28,7 @@ export default function ProductsView() {
   return (
     <Container>
       <Typography variant="h4" sx={{ mb: 5 }}>
-        Products
+        Posts
       </Typography>
 
       <Stack
@@ -57,7 +57,7 @@ export default function ProductsView() {
         ))}
       </Grid>
 
-      <ProductCartWidget />
+    
     </Container>
   );
 }

@@ -8,7 +8,7 @@ export default function SignUPage() {
   return (
     <>
       <Helmet>
-        <title> SingUp | Curator365 </title>
+        <title> SingUp | Curator365 | Client Interface </title>
       </Helmet>
 
       <SignUp/>

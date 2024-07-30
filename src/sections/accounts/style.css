@@ -1,0 +1,139 @@
+/* style.css */
+
+.example:hover {
+    color: rgb(22, 46, 155);
+  }
+  
+  .addAccount {
+    border: none;
+    background: transparent;
+    color: white;
+    border: 5px solid;
+    display: flex;
+    justify-content: center;
+  }
+  
+  .accountCard {
+    text-align: center;
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 2px;
+    height: 200px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 1px 1px 1px 1px;
+    margin-top: 20px;
+  }
+  
+  .modal {
+    display: flex;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.4);
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .modalContent {
+    background-color: #fefefe;
+    margin: auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 500px;
+    border-radius: 10px;
+  }
+  
+  .close {
+    color: #aaa;
+    float: right;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+  
+  .close:hover {
+    color: black;
+    text-decoration: none;
+  }
+  
+  .ul {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  .li {
+    padding: 8px 0;
+  }
+  
+
+
+.swiper-button-prev:hover {
+  background-color: rgba(0, 0, 0, 0.8); /* Darken the background on hover */
+}
+
+/* Adjust the position, size, and appearance of the next button */
+
+
+.swiper-button-next:hover {
+  background-color: rgba(0, 0, 0, 0.8); /* Darken the background on hover */
+}
+
+/* Add custom icons for the navigation buttons */
+.swiper-button-prev::after,
+.swiper-button-next::after {
+  font-size: 20px; /* Adjust the icon size */
+}
+
+/* Additional styles to position buttons */
+.swiper-button-prev,
+.swiper-button-next {
+  top: 50%; /* Center the buttons vertically */
+  transform: translateY(-50%); /* Align to the center */
+}
+
+.swiper-slide-custom:hover {
+  transform: translateY(-4px); /* Lift slide on hover */
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Intensify shadow on hover */
+}
+
+.swiper-button-prev,
+.swiper-button-next {
+  color: #000;
+  background-color: rgba(255, 255, 255, 0.8);
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.swiper-button-prev:hover,
+.swiper-button-next:hover {
+  background-color: #000;
+  color: #fff;
+}
+
+.swiper-horizontal>.swiper-pagination-bullets, .swiper-pagination-bullets.swiper-pagination-horizontal, .swiper-pagination-custom, .swiper-pagination-fraction{
+  bottom: -9px;
+  display: none;
+}
+
+.swiper-button-prev:hover,
+.swiper-button-next:hover {
+  background-color: #000;
+  color: #fff;
+}
+/* Hover effect on grid items */
+.Grid-item-style:hover {
+  transform: scale(1.02);
+}

@@ -1,17 +1,18 @@
 import { Helmet } from 'react-helmet-async';
 
-import { AddAccounts } from 'src/sections/add-accounts';
+import { CalendarView } from 'src/sections/calendar/view';
 
 // ----------------------------------------------------------------------
 
-export default function LoginPage() {
+export default function CalendarPage() {
   return (
     <>
       <Helmet>
-        <title> Accounts | Curator365 </title>
+        <title> Calendar | Curator 365 </title>
       </Helmet>
 
-      <AddAccounts />
+      <CalendarView />
     </>
   );
 }
+  

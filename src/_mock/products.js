@@ -4,31 +4,28 @@ import { faker } from '@faker-js/faker';
 // ----------------------------------------------------------------------
 
 const PRODUCT_NAME = [
-  'Nike Air Force 1 NDESTRUKT',
-  'Nike Space Hippie 04',
-  'Nike Air Zoom Pegasus 37 A.I.R. Chaz Bear',
-  'Nike Blazer Low 77 Vintage',
-  'Nike ZoomX SuperRep Surge',
-  'Zoom Freak 2',
-  'Nike Air Max Zephyr',
-  'Jordan Delta',
-  'Air Jordan XXXV PF',
-  'Nike Waffle Racer Crater',
-  'Kyrie 7 EP Sisterhood',
-  'Nike Air Zoom BB NXT',
-  'Nike Air Force 1 07 LX',
-  'Nike Air Force 1 Shadow SE',
-  'Nike Air Zoom Tempo NEXT%',
-  'Nike DBreak-Type',
-  'Nike Air Max Up',
-  'Nike Air Max 270 React ENG',
-  'NikeCourt Royale',
-  'Nike Air Zoom Pegasus 37 Premium',
-  'Nike Air Zoom SuperRep',
-  'NikeCourt Royale',
-  'Nike React Art3mis',
-  'Nike React Infinity Run Flyknit A.I.R. Chaz Bear',
+  'سورة الفاتحة: 1-7 - بسم الله الرحمن الرحيم، الحمد لله رب العالمين، الرحمن الرحيم، مالك يوم الدين، إياك نعبد وإياك نستعين، اهدنا الصراط المستقيم، صراط الذين أنعمت عليهم غير المغضوب عليهم ولا الضالين.',
+  'سورة البقرة: 286 - لا يكلف الله نفسا إلا وسعها.',
+  'سورة آل عمران: 200 - يا أيها الذين آمنوا اصبروا وصابروا ورابطوا واتقوا الله لعلكم تفلحون.',
+  'سورة الأنعام: 82 - أولئك الذين يؤمنون بآياتنا هم المؤمنون حقا.',
+  'سورة الكهف: 110 - قل إنما أنا بشر مثلكم يوحى إليّ أنما إلهكم إله واحد.',
+  'سورة الإسراء: 23 - وقضى ربك ألا تعبدوا إلا إياه وبالوالدين إحسانا.',
+  'سورة الأنبياء: 87 - ولقد نادانا نوح فلنعم المجيبون.',
+  'سورة الحشر: 18 - يا أيها الذين آمنوا اتقوا الله والتنظر نفس ما قدمت لغد.',
+  'سورة النور: 35 - الله نور السماوات والأرض مثل نوره كمشكاة فيها مصباح.',
+  'سورة النحل: 97 - من عمل صالحا من ذكر أو أنثى وهو مؤمن فلنحيينه حياة طيبة.',
+  'سورة المرسلات: 15 - ويوم القيامة تردون إلى الله.',
+  'سورة الصافات: 96 - الذي خلقني فهو يهدين.',
+  'سورة الطلاق: 2 - ومن يتق الله يجعل له مخرجا.',
+  'سورة التوبة: 51 - قل لن يصيبنا إلا ما كتب الله لنا هو مولانا وعلى الله فليتوكل المؤمنون.',
+  'سورة الإخلاص: 1-4 - قل هو الله أحد، الله الصمد، لم يلد ولم يولد، ولم يكن له كفوا أحد.',
+  'سورة الجاثية: 30 - فأما الذين آمنوا فيدخلهم ربهم في رحمته.',
+  'سورة يوسف: 64 - إن الله مع الصابرين.',
+  'سورة الكافرون: 6 - لكم دينكم ولي دين.',
+  'سورة الشرح: 5-6 - فإن مع العسر يسرا، إن مع العسر يسرا.',
+  'سورة الحجر: 98 - فسبح بحمد ربك وكن من الساجدين.'
 ];
+
 const PRODUCT_COLOR = [
   '#00AB55',
   '#000000',
@@ -49,7 +46,7 @@ export const products = [...Array(24)].map((_, index) => {
     id: faker.string.uuid(),
     cover: `/assets/images/products/product_${setIndex}.jpg`,
     name: PRODUCT_NAME[index],
-    price: faker.number.int({ min: 4, max: 99, precision: 0.01 }),
+    price: '',
     priceSale: setIndex % 3 ? null : faker.number.int({ min: 19, max: 29, precision: 0.01 }),
     colors:
       (setIndex === 1 && PRODUCT_COLOR.slice(0, 2)) ||
@@ -59,6 +56,6 @@ export const products = [...Array(24)].map((_, index) => {
       (setIndex === 23 && PRODUCT_COLOR.slice(4, 6)) ||
       (setIndex === 24 && PRODUCT_COLOR.slice(5, 6)) ||
       PRODUCT_COLOR,
-    status: sample(['sale', 'new', '', '']),
+    status: sample(['new', 'new', '', '']),
   };
 });

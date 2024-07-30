@@ -1,0 +1,7 @@
+facebook group deprecated fb documentation
+https://developers.facebook.com/docs/permissions
+https://developers.facebook.com/community/threads/322290697598964/
+
+
+instagram api doc
+https://developers.facebook.com/docs/instagram-platform/instagram-graph-api/content-publishing#access-tokens

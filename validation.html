@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Form Validation</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    .error { color: red; }
+  </style>
+</head>
+<body>
+  <div class="container mt-5">
+    <form id="myForm">
+      <div class="form-group">
+        <label for="username">Username:</label>
+        <input type="text" class="form-control" id="username" name="username">
+        <span class="error" id="usernameError"></span>
+      </div>
+      <div class="form-group">
+        <label for="email">Email:</label>
+        <input type="text" class="form-control" id="email" name="email">
+        <span class="error" id="emailError"></span>
+      </div>
+      <div class="form-group">
+        <label for="password">Password:</label>
+        <input type="password" class="form-control" id="password" name="password">
+        <span class="error" id="passwordError"></span>
+      </div>
+      <div class="form-group">
+        <label for="age">Age:</label>
+        <input type="text" class="form-control" id="age" name="age">
+        <span class="error" id="ageError"></span>
+      </div>
+      <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+  </div>
+
+  <!-- jQuery -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <!-- Bootstrap JS and Popper.js -->
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <script src="validation.js"></script>
+</body>
+</html>
+
+<script>
+    $(document).ready(function() {
+  function validateField(field, rules) {
+    let isValid = true;
+    let errorMessage = '';
+
+    for (const rule of rules) {
+      if (rule.type === 'required' && !field.value.trim()) {
+        isValid = false;
+        errorMessage = rule.message || 'This field is required';
+        break;
+      }
+      if (rule.type === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(field.value)) {
+        isValid = false;
+        errorMessage = rule.message || 'Please enter a valid email address';
+        break;
+      }
+      if (rule.type === 'minLength' && field.value.length < rule.value) {
+        isValid = false;
+        errorMessage = rule.message || `Minimum length is ${rule.value}`;
+        break;
+      }
+      if (rule.type === 'text' && !/^[a-zA-Z\s]+$/.test(field.value)) {
+        isValid = false;
+        errorMessage = rule.message || 'Please enter valid text';
+        break;
+      }
+      if (rule.type === 'number' && !/^\d+$/.test(field.value)) {
+        isValid = false;
+        errorMessage = rule.message || 'Please enter a valid number';
+        break;
+      }
+      // Add more validation rules as needed
+    }
+
+    return { isValid, errorMessage };
+  }
+
+
+  function showError(field, message) {
+    const errorElement = $(`#${field.id}Error`);
+    errorElement.text(message);
+  }
+
+  function clearError(field) {
+    const errorElement = $(`#${field.id}Error`);
+    errorElement.text('');
+  }
+
+  const validations = {
+    username: [
+      { type: 'required', message: 'Username is required' },
+      { type: 'minLength', value: 3, message: 'Username must be at least 3 characters long' },
+      { type: 'text', message: 'Username should contain only letters' }
+    ],
+    email: [
+      { type: 'required', message: 'Email is required' },
+      { type: 'email', message: 'Please enter a valid email' }
+    ], 
+    password: [
+     // { type: 'required', message: 'Password is required' },
+      { type: 'minLength', value: 6, message: 'Password must be at least 6 characters long' }
+    ],
+    age: [
+      { type: 'required', message: 'Age is required' },
+      { type: 'number', message: 'Age should be a valid number' }
+    ]
+  }; 
+
+
+
+  $('input').on('input', function() {
+    const field = this;
+    const validation = validations[field.name];
+    console.log(validation)
+    console.log(field)
+    if (validation) {
+      const result = validateField(field, validation);
+      if (result.isValid) {
+        clearError(field);
+      } else {
+        showError(field, result.errorMessage);
+      }
+    }
+  }); 
+
+  $('#myForm').on('submit', function(event) {
+    let formIsValid = true;
+    $('input').each(function() {
+      const field = this;
+      const validation = validations[field.name];
+      if (validation) {
+        const result = validateField(field, validation);
+        if (!result.isValid) {
+          showError(field, result.errorMessage);
+          formIsValid = false;
+        } else {
+          clearError(field);
+        }
+      }
+    });
+
+    if (!formIsValid) {
+      event.preventDefault();
+    }
+  });
+});
+
+</script>

@@ -8,10 +8,9 @@ export default function UserPage() {
   return (
     <>
       <Helmet>
-        <title> User | Minimal UI </title>
+        <title> User | Curator365 | Client Interface </title>
       </Helmet>
-
       <UserView />
     </>
-  );
+  ); 
 }

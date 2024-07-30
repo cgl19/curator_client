@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import toast from 'react-hot-toast';
-import { useNavigate,Link } from 'react-router-dom'; // Updated import
+import { useNavigate, Link } from 'react-router-dom';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
@@ -13,70 +13,104 @@ import IconButton from '@mui/material/IconButton';
 import LoadingButton from '@mui/lab/LoadingButton';
 import { alpha, useTheme } from '@mui/material/styles';
 import InputAdornment from '@mui/material/InputAdornment';
-
+import { useDispatch } from 'react-redux';
 import apiCall from 'src/utils/api';
-
-import { bgGradient } from 'src/theme/css';
+import { loginSuccess } from '../../store/reducers/authSlice';
+import { bgGradient } from 'src/theme/css'; // Ensure this import is correct
 
 import Logo from 'src/components/logo';
-import Iconify from 'src/components/iconify'; 
+import Iconify from 'src/components/iconify';
 
-// ----------------------------------------------------------------------
-
-export default function LoginView() {
-  const theme = useTheme();
-  const navigate = useNavigate(); // Updated to useNavigate
+export default function LoginView() { 
+  const dispatch = useDispatch();
+  const theme = useTheme(); 
+  const navigate = useNavigate(); 
 
   const [showPassword, setShowPassword] = useState(false);
   const [loginPassword, setLoginPassword] = useState('');
   const [loginEmail, setLoginEmail] = useState('');
-  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(false);
 
-  const handleClick = async() => { 
-    if (!loginEmail || !loginPassword) {
-      toast.error("Please fill in all fields");
-      console.log(data)
-      return;
-    }
-    
-    toast.loading("Submitting...");
-     navigate('/')
-    // Simulate async request
-    try {
-      const response = await apiCall('get', '/api/example');
-      setData(response);
-    } catch (error) {
-      console.error('Error fetching data:', error);
-    }
 
-    
-    setTimeout(() => {
-      toast.dismiss();
-      toast.success("Submitted Successfully");
-    }, 2000);
-  };
+
+  const handleFacebookAuth=()=>{
+    const loaderId=toast.loading("Redirecting...")
+    setTimeout(()=>{
+      toast.dismiss(loaderId)
+      toast.success("Redirecting to Facebook...")
+    },5000)
+    navigate('/facebook/auth')
+  }
+
+  const handleGoogleAuth=()=>{
+    setTimeout(()=>{
+      const loaderId=toast.loading("Redirecting...")
+      toast.dismiss(loaderId)
+      toast.success("Redirecting to Google...")
+    },5000)
+    navigate('/google/auth')
+  }
 
   
-
+  const handleClick = async () => {
+    if (!loginEmail || !loginPassword) {
+      toast.error("Please fill in all fields");
+      return;
+    }
    
+    try {  
+      setLoading(true);
+      var toastId = toast.loading('Waiting...');
+      const uri=`${import.meta.env.VITE_BASE_BACKEND_URL}auth/login`;
+      const res = await apiCall('post', uri, {
+        email: loginEmail,
+        password: loginPassword,
+      });
+       
+     
+      if (res.status) {
+        toast.dismiss(toastId);
+        try{
+          dispatch(loginSuccess(res));
+          toast.success("Logged in successfully");
+          navigate('/');
+        }catch(error){
+          console.log("Error: ",error)
+          toast.dismiss(toastId)
+          toast.error("Oops! An error occurred while trying to log in. Please try again.")
+          return;
+        }
+      
+      } else {
+        toast.dismiss(toastId);
+        toast.error("Oops! login failed, try again.");
+      }
+    } catch (error) {
+      console.log(error);
+      toast.dismiss(toastId);
+      toast.error("Oops! Network error occured");
+    } finally {
+      setLoading(false);
+    }
+  }; 
 
   const renderForm = (
     <>
       <Stack spacing={3}>
         <TextField 
-          name="email" 
+          name="email"
           label="Email address" 
           value={loginEmail} 
           onChange={(e) => setLoginEmail(e.target.value)}
         />
         <TextField
           name="password"
-          label="Password"
+          label="Password*"
           value={loginPassword}
           type={showPassword ? 'text' : 'password'}
           onChange={(e) => setLoginPassword(e.target.value)}
           InputProps={{
-            endAdornment: (
+            endAdornment: ( 
               <InputAdornment position="end">
                 <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
                   <Iconify icon={showPassword ? 'eva:eye-fill' : 'eva:eye-off-fill'} />
@@ -100,6 +134,8 @@ export default function LoginView() {
         variant="contained"
         color="inherit"
         onClick={handleClick}
+        loading={loading}
+        disabled={loading}
       >
         Login
       </LoadingButton>
@@ -132,37 +168,40 @@ export default function LoginView() {
             maxWidth: 420,
           }}
         >
-          <Typography variant="h4">Sign in to Minimal</Typography>
+          <Typography variant="h4">Sign in to Curator365</Typography>
 
           <Typography variant="body2" sx={{ mt: 2, mb: 5 }}>
             Don’t have an account?
             <Link to="/signup" variant="subtitle2" sx={{ ml: 0.5 }}>
               Get started
             </Link>
-          </Typography>
+          </Typography> 
 
           <Stack direction="row" spacing={2}>
-            <Button
-              fullWidth
-              size="large"
-              color="inherit"
-              variant="outlined"
-              sx={{ borderColor: alpha(theme.palette.grey[500], 0.16) }}
-            >
-              <Iconify icon="eva:google-fill" color="#DF3E30" />
-            </Button>
+                <Button
 
-            <Button
-              fullWidth
-              size="large"
-              color="inherit"
-              variant="outlined"
-              sx={{ borderColor: alpha(theme.palette.grey[500], 0.16) }}
-            >
-              <Iconify icon="eva:facebook-fill" color="#1877F2" />
-            </Button>
+                onClick={handleGoogleAuth}
+                fullWidth
+                size="large"
+                color="inherit"
+                variant="outlined"
+                sx={{ borderColor: alpha(theme.palette.grey[500], 0.16) }}
+                >
+                <Iconify icon="eva:google-fill" color="#DF3E30" />
+                </Button>
 
-            <Button
+                <Button
+                onClick={handleFacebookAuth}
+                fullWidth
+                size="large"
+                color="inherit"
+                variant="outlined"
+                sx={{ borderColor: alpha(theme.palette.grey[500], 0.16) }}
+                >
+                <Iconify icon="eva:facebook-fill" color="#1877F2" />
+                </Button>
+
+            {/* <Button
               fullWidth
               size="large"
               color="inherit"
@@ -170,7 +209,7 @@ export default function LoginView() {
               sx={{ borderColor: alpha(theme.palette.grey[500], 0.16) }}
             >
               <Iconify icon="eva:twitter-fill" color="#1C9CEA" />
-            </Button>
+            </Button> */}
           </Stack>
 
           <Divider sx={{ my: 3 }}>

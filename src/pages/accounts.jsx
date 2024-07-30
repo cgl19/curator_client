@@ -1,17 +1,17 @@
 import { Helmet } from 'react-helmet-async';
 
-import { BlogView } from 'src/sections/blog/view';
+import { AddAccounts } from 'src/sections/accounts';
 
 // ----------------------------------------------------------------------
 
-export default function BlogPage() {
+export default function LoginPage() {
   return (
     <>
       <Helmet>
-        <title> Blog | Minimal UI </title>
+        <title> Accounts | Curator365 </title>
       </Helmet>
 
-      <BlogView />
+      <AddAccounts />
     </>
   );
 }

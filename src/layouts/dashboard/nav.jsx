@@ -23,7 +23,6 @@ import { NAV } from './config-layout';
 import navConfig from './config-navigation';
 
 // ----------------------------------------------------------------------
-
 export default function Nav({ openNav, onCloseNav }) {
   const pathname = usePathname();
 
@@ -50,7 +49,6 @@ export default function Nav({ openNav, onCloseNav }) {
       }}
     >
       <Avatar src={account.photoURL} alt="photoURL" />
-
       <Box sx={{ ml: 2 }}>
         <Typography variant="subtitle2">{account.displayName}</Typography>
 
@@ -67,36 +65,10 @@ export default function Nav({ openNav, onCloseNav }) {
         <NavItem key={item.title} item={item} />
       ))}
     </Stack>
-  );
+  ); 
 
-  const renderUpgrade = (
-    <Box sx={{ px: 2.5, pb: 3, mt: 10 }}>
-      <Stack alignItems="center" spacing={3} sx={{ pt: 5, borderRadius: 2, position: 'relative' }}>
-        <Box
-          component="img"
-          src="/assets/illustrations/illustration_avatar.png"
-          sx={{ width: 100, position: 'absolute', top: -50 }}
-        />
 
-        <Box sx={{ textAlign: 'center' }}>
-          <Typography variant="h6">Get more?</Typography>
 
-          <Typography variant="body2" sx={{ color: 'text.secondary', mt: 1 }}>
-            From only $69
-          </Typography>
-        </Box>
-
-        <Button
-          href="https://material-ui.com/store/items/minimal-dashboard/"
-          target="_blank"
-          variant="contained"
-          color="inherit"
-        >
-          Upgrade to Pro
-        </Button>
-      </Stack>
-    </Box>
-  );
 
   const renderContent = (
     <Scrollbar
@@ -109,15 +81,15 @@ export default function Nav({ openNav, onCloseNav }) {
         },
       }}
     >
-      <Logo sx={{ mt: 3, ml: 4 }} />
+      <Logo sx={{ mt: 3, ml: 4, mb:5 }} />
 
-      {renderAccount}
+      
 
       {renderMenu}
 
       <Box sx={{ flexGrow: 1 }} />
 
-      {renderUpgrade}
+      {renderAccount}
     </Scrollbar>
   );
 
@@ -162,16 +134,13 @@ Nav.propTypes = {
 };
 
 // ----------------------------------------------------------------------
-
 function NavItem({ item }) {
   const pathname = usePathname();
-
   const active = item.path === pathname;
-
   return (
     <ListItemButton
       component={RouterLink}
-      href={item.path}
+      href={item.path} 
       sx={{
         minHeight: 44,
         borderRadius: 0.75,
@@ -192,12 +161,11 @@ function NavItem({ item }) {
       <Box component="span" sx={{ width: 24, height: 24, mr: 2 }}>
         {item.icon}
       </Box>
-
       <Box component="span">{item.title} </Box>
     </ListItemButton>
-  );
+  ); 
 }
 
-NavItem.propTypes = {
+NavItem.propTypes = { 
   item: PropTypes.object,
 };

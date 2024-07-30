@@ -23,17 +23,11 @@ import { ColorPicker } from 'src/components/color-utils';
 export const SORT_OPTIONS = [
   { value: 'featured', label: 'Featured' },
   { value: 'newest', label: 'Newest' },
-  { value: 'priceDesc', label: 'Price: High-Low' },
-  { value: 'priceAsc', label: 'Price: Low-High' },
 ];
-export const GENDER_OPTIONS = ['Men', 'Women', 'Kids'];
-export const CATEGORY_OPTIONS = ['All', 'Shose', 'Apparel', 'Accessories'];
-export const RATING_OPTIONS = ['up4Star', 'up3Star', 'up2Star', 'up1Star'];
-export const PRICE_OPTIONS = [
-  { value: 'below', label: 'Below $25' },
-  { value: 'between', label: 'Between $25 - $75' },
-  { value: 'above', label: 'Above $75' },
-];
+export const GENDER_OPTIONS = ['Quranic Verses','Hadith','Islamic History','Islamic Jurisprudence','Islamic Ethics and Morality','Islamic Practices and Rituals','Islamic Culture and Traditions','Islamic Art and Architecture','Islamic Education and Resources','Current Affairs and Islamic Perspectives','Personal Development and Spirituality','Community News and Events'];
+export const CATEGORY_OPTIONS = ['All'];
+export const RATING_OPTIONS = ['up4Star'];
+
 export const COLOR_OPTIONS = [
   '#00AB55',
   '#000000',
@@ -50,7 +44,7 @@ export const COLOR_OPTIONS = [
 export default function ProductFilters({ openFilter, onOpenFilter, onCloseFilter }) {
   const renderGender = (
     <Stack spacing={1}>
-      <Typography variant="subtitle2">Gender</Typography>
+     
       <FormGroup>
         {GENDER_OPTIONS.map((item) => (
           <FormControlLabel key={item} control={<Checkbox />} label={item} />
@@ -68,9 +62,9 @@ export default function ProductFilters({ openFilter, onOpenFilter, onCloseFilter
         ))}
       </RadioGroup>
     </Stack>
-  );
+  );  
 
-  const renderColors = (
+  const renderColors = (  
     <Stack spacing={1}>
       <Typography variant="subtitle2">Colors</Typography>
       <ColorPicker
@@ -83,21 +77,7 @@ export default function ProductFilters({ openFilter, onOpenFilter, onCloseFilter
     </Stack>
   );
 
-  const renderPrice = (
-    <Stack spacing={1}>
-      <Typography variant="subtitle2">Price</Typography>
-      <RadioGroup>
-        {PRICE_OPTIONS.map((item) => (
-          <FormControlLabel
-            key={item.value}
-            value={item.value}
-            control={<Radio />}
-            label={item.label}
-          />
-        ))}
-      </RadioGroup>
-    </Stack>
-  );
+ 
 
   const renderRating = (
     <Stack spacing={1}>
@@ -170,12 +150,6 @@ export default function ProductFilters({ openFilter, onOpenFilter, onCloseFilter
             {renderGender}
 
             {renderCategory}
-
-            {renderColors}
-
-            {renderPrice}
-
-            {renderRating}
           </Stack>
         </Scrollbar>
 

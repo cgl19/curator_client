@@ -7,8 +7,8 @@ import { ProductsView } from 'src/sections/products/view';
 export default function ProductsPage() {
   return (
     <>
-      <Helmet>
-        <title> Products | Minimal UI </title>
+      <Helmet> 
+        <title> Posts | Curator365 | Client Interface </title>
       </Helmet>
 
       <ProductsView />
