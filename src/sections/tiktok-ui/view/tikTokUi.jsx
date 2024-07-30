@@ -19,11 +19,11 @@ import { styled } from '@mui/material/styles';
 import { FormControlLabel } from '@mui/material';
 import { Switch } from '@mui/material';
    
-const privacyOptions = [
+const privacyOptions = [  
   { value: 'SELF_ONLY', label: 'Private' },
   { value: 'FRIENDS', label: 'Friends' },
   { value: 'PUBLIC', label: 'Public' },
-]; 
+];    
 
 const interactionOptions = [ 
   { value: 'comment', label: 'Allow Comments' },
