@@ -18,9 +18,11 @@ import apiCall from 'src/utils/api';
 import { styled } from '@mui/material/styles';
 import { FormControlLabel } from '@mui/material';
 import { Switch } from '@mui/material';
-   
+import Iconify from 'src/components/iconify';
+import { Tooltip } from '@mui/material';
+
 const privacyOptions = [  
-  { value: 'SELF_ONLY', label: 'Private' },
+  { value: 'SELF_ONLY', label: 'Private (only me)' },
   { value: 'FRIENDS', label: 'Friends' },
   { value: 'PUBLIC', label: 'Public' },
 ];    
@@ -31,13 +33,12 @@ const interactionOptions = [
   { value: 'stitch', label: 'Allow Stitch' },
 ];
 
-const commercialContentOptions = [
+const commercialContentOptions = [ 
   { value: 'your_brand', label: 'Your Brand' },
   { value: 'branded_content', label: 'Branded Content' },
 ];
 
-const maxVideoDuration = 90; // in seconds, adjust as needed
-
+const maxVideoDuration = 90; // in seconds, adjust as needed 
 const SlimDialog = styled(Dialog)(({ theme }) => ({
   '& .MuiDialogTitle-root': {
     backgroundColor: theme.palette.background.paper,
@@ -83,6 +84,7 @@ const CustomFileInput = styled('label')(({ theme }) => ({
   },
 }));
 
+
 const RequiredAsterisk = styled('span')(({ theme }) => ({
   color: 'red',
   marginLeft: theme.spacing(0.5),
@@ -107,31 +109,32 @@ export default function TikTokPostUpload({ user }) {
   const handleFileChange = (event) => {
     const file = event.target.files[0];
     if (file) {
-      const fileType = file.type.split('/')[0];
-      setPostType(fileType === 'video' ? 'video' : 'photo');
+        const fileType = file.type.split('/')[0];
+        setPostType(fileType === 'video' ? 'video' : 'photo');
 
-      if (fileType === 'video') {
-        const video = document.createElement('video');
-        video.preload = 'metadata'; 
-        video.onloadedmetadata = () => {
-          window.URL.revokeObjectURL(video.src);
-          const { duration } = video; // Destructure duration from video object
-          if (duration > maxVideoDuration) {
-            alert(`Video exceeds maximum allowed duration of ${maxVideoDuration} seconds.`);
-          } else {
+        if (fileType === 'video') {
+            const video = document.createElement('video');
+            video.preload = 'metadata';
+            video.onloadedmetadata = () => {
+                window.URL.revokeObjectURL(video.src);
+                const { duration } = video; // Destructure duration from video object
+                if (duration > maxVideoDuration) {
+                    alert(`Video exceeds maximum allowed duration of ${maxVideoDuration} seconds.`);
+                } else {
+                    setVideoFile(file);
+                    setVideoPreview(URL.createObjectURL(file));
+                    setInteractions([]); // Clear interactions for video
+                }
+            };
+            video.src = URL.createObjectURL(file);
+        } else {
+            // For photos, simply set the file and its preview
             setVideoFile(file);
             setVideoPreview(URL.createObjectURL(file));
-          }
-        };
-        video.src = URL.createObjectURL(file);
-      } else {
-        // For photos, simply set the file and its preview
-        setVideoFile(file);
-        setVideoPreview(URL.createObjectURL(file));
-      }
+            setInteractions(['comment']); // Pre-select "Allow Comments" for photo
+        }
     }
-  };
-
+};
   const handleSubmit = async () => {
     if (!videoFile) {
       alert('Please select a file.');
@@ -192,13 +195,13 @@ export default function TikTokPostUpload({ user }) {
     if (disclosureEnabled) {
       if (commercialContent.includes('your_brand') && commercialContent.includes('branded_content')) {
         setComplianceMessage(
-          <span>
+          <span xs={{'marginTop':3}}>
             By posting, you agree to 
-            <a style={{ color: 'red' }} href="https://www.tiktok.com/legal/page/global/bc-policy/en" target="_blank" rel="noopener noreferrer">
+            <a style={{ color: 'red', marginLeft:'2px',marginRight:2 }} href="https://www.tiktok.com/legal/page/global/bc-policy/en" target="_blank" rel="noopener noreferrer">
               TikTok's Branded Content Policy
             </a>
             and 
-            <a style={{ color: 'red' }} href="https://www.tiktok.com/legal/page/global/music-usage-confirmation/en" target="_blank" rel="noopener noreferrer">
+            <a style={{ color: 'red', marginLeft:'2px' }} href="https://www.tiktok.com/legal/page/global/music-usage-confirmation/en" target="_blank" rel="noopener noreferrer">
               TikTok's Music Usage Confirmation
             </a>
             .
@@ -216,11 +219,11 @@ export default function TikTokPostUpload({ user }) {
         );      } else if (commercialContent.includes('branded_content')) {
         setComplianceMessage(  <span>
           By posting, you agree to 
-          <a style={{ color: 'red' }} href="https://www.tiktok.com/legal/page/global/bc-policy/en" target="_blank" rel="noopener noreferrer">
+          <a style={{ color: 'red',marginLeft:'2px' }} href="https://www.tiktok.com/legal/page/global/bc-policy/en" target="_blank" rel="noopener noreferrer">
             TikTok's Branded Content Policy
           </a>
           and 
-          <a style={{ color: 'red' }} href="https://www.tiktok.com/legal/page/global/music-usage-confirmation/en" target="_blank" rel="noopener noreferrer">
+          <a style={{ color: 'red',marginLeft:'2px' }} href="https://www.tiktok.com/legal/page/global/music-usage-confirmation/en" target="_blank" rel="noopener noreferrer">
             TikTok's Music Usage Confirmation
           </a>
           .
@@ -258,7 +261,7 @@ export default function TikTokPostUpload({ user }) {
   return (
     <>
       <SlimDialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
-        <DialogTitle>Upload to TikTok</DialogTitle>
+        <DialogTitle>Post to TikTok</DialogTitle>
         <DialogContent>
           <Stack spacing={2}>
             <Stack direction="row" alignItems="center" spacing={2}>
@@ -273,19 +276,20 @@ export default function TikTokPostUpload({ user }) {
                   objectFit: 'cover',
                 }}
               />
-              <Typography variant="subtitle1">{user.nickname}</Typography>
+              <Typography variant="subtitle1" >{user.nickname}</Typography>
             </Stack>
+            <Box sx={{borderRadius:'5px', boxShadow:'2px 2px 2px 2px #b2b2b2'}}>
+            <Typography sx={{fontSize:13,marginLeft:2 }} >Title <RequiredAsterisk>*</RequiredAsterisk></Typography>
             <SlimTextField
+             placeholder={"Enter title and tags"}
               fullWidth
-              label={<span>Title <RequiredAsterisk>*</RequiredAsterisk></span>}
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               margin="normal"
             />
-            <FormControl fullWidth margin="normal" >
-              <InputLabel>
-                Privacy <RequiredAsterisk>*</RequiredAsterisk>
-              </InputLabel>
+            </Box>
+            <FormControl fullWidth margin="normal" sx={{boxShadow:'2px 2px 2px 2px #b2b2b2',borderRadius:'5px'}} >
+            <Typography sx={{fontSize:13, marginBottom:2,marginLeft:2 }} >Privacy  <RequiredAsterisk>*</RequiredAsterisk></Typography>
               <Select value={privacy} onChange={handlePrivacyChange}>
                 {privacyOptions.map((option) => (
                   <MenuItem key={option.value} value={option.value}>
@@ -296,88 +300,90 @@ export default function TikTokPostUpload({ user }) {
             </FormControl>
 
   <FormControl fullWidth margin="normal">
-  <Box sx={{ my: 1 }}>
-  <Switch
-    checked={disclosureEnabled}
-    onChange={handleDisclosureToggle}
-  />
-  <Typography sx={{ mx: 2,fontSize:13 }} variant="body2" color="textSecondary">
-    Disclose Commercial Content <RequiredAsterisk>*</RequiredAsterisk>
-  </Typography>
-</Box>
+        <Box sx={{ my: 1,boxShadow:'2px 2px 2px 2px #b2b2b2',borderRadius:'5px' }}>
+        <Switch
+          checked={disclosureEnabled}
+          onChange={handleDisclosureToggle}
+        />
+        <Typography sx={{ mx: 2,fontSize:13 }} variant="body2" color="textSecondary">
+          Disclose Commercial Content <RequiredAsterisk>*</RequiredAsterisk>
+        </Typography>
+      </Box>
 
-  <Box sx={{ my: 1,mx:1 }}>
-    {commercialContentOptions.map((option) => (
+              <Box sx={{ my: 1,boxShadow:'2px 2px 2px 2px #b2b2b2',borderRadius:'5px' }}>
+                {commercialContentOptions.map((option) => (
+                  <FormControlLabel
+                    key={option.value}
+                    control={
+                      <Switch
+                         sx={{fontSize:13, marginLeft:1 }}
+                        checked={commercialContent.includes(option.value)}
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            setCommercialContent([...commercialContent, option.value]);
+                          } else {
+                            setCommercialContent(commercialContent.filter((value) => value !== option.value));
+                          }
+                        }}
+                        disabled={!disclosureEnabled}
+                      />
+                    }
+                    label={<span style={{ fontSize: 13 }}>{option.label}</span>}
+                  />
+                ))}
+              </Box>
+
+              {disclosureEnabled && commercialContent.length === 0 && (
+                <Typography variant="body2" color="error" sx={{ mt: 1, mx:1 }}>
+                  You need to indicate if your content promotes yourself, a third party, or both.
+                </Typography>
+              )}
+              {commercialContent.includes('your_brand') && (
+              <Typography variant="body2" color="textSecondary" sx={{ mt: 1, mx: 1 }}>
+              Your photo/video will be labeled as <span style={{ color: 'rgb(24,119,242)' }}>'Promotional content'</span>.
+            </Typography>
+              )}
+              {commercialContent.includes('branded_content') && (
+                <Typography variant="body2" color="textSecondary" sx={{ mt: 1, mx: 1 }}>
+                  Your photo/video will be labeled as  <span style={{ color: 'rgb(24,119,242)' }}>'Paid partnership'</span>.
+              </Typography>
+              )}
+            </FormControl>
+
+
+<Box sx={{boxShadow:'2px 2px 2px 2px #b2b2b2', borderRadius:'5px'}}>
+  <InputLabel sx={{fontSize:13, marginBottom:2,marginLeft:2 }}>Interactions <RequiredAsterisk>*</RequiredAsterisk></InputLabel>
+   <FormControl fullWidth margin="normal" >
+            
+  <Stack direction="row" spacing={2}>
+    {interactionOptions.map((option) => (
       <FormControlLabel
         key={option.value}
         control={
-          <Switch
-            checked={commercialContent.includes(option.value)}
+          <Checkbox
+            checked={interactions.includes(option.value)}
             onChange={(e) => {
               if (e.target.checked) {
-                setCommercialContent([...commercialContent, option.value]);
+                setInteractions([...interactions, option.value]);
               } else {
-                setCommercialContent(commercialContent.filter((value) => value !== option.value));
+                setInteractions(interactions.filter((value) => value !== option.value));
               }
             }}
-            disabled={!disclosureEnabled}
+            disabled={postType === 'photo' && option.value !== 'comment'}
           />
         }
-        label={<span style={{ fontSize: 13 }}>{option.label}</span>}
+        label={option.label}
       />
     ))}
-  </Box>
-
-  {disclosureEnabled && commercialContent.length === 0 && (
-    <Typography variant="body2" color="error" sx={{ mt: 1, mx:1 }}>
-      You need to indicate if your content promotes yourself, a third party, or both.
-    </Typography>
-  )}
-  {commercialContent.includes('your_brand') && (
-    <Typography variant="body2" color="textSecondary" sx={{ mt: 1,mx:1 }}>
-      Your photo/video will be labeled as 'Promotional content'.
-    </Typography>
-  )}
-  {commercialContent.includes('branded_content') && (
-    <Typography variant="body2" color="textSecondary" sx={{ mt: 1,mx:1 }}>
-      Your photo/video will be labeled as 'Paid partnership'.
-    </Typography>
-  )}
-  {commercialContent.includes('your_brand') && commercialContent.includes('branded_content') && (
-    <Typography variant="body2" color="textSecondary" sx={{ mt: 1,mx:1 }}>
-      Your photo/video will be labeled as 'Paid partnership'.
-    </Typography>
-  )}
+  </Stack>
 </FormControl>
+</Box>
+           
+            
 
-            <FormControl fullWidth margin="normal"  disabled={postType === 'photo'}>
-              <InputLabel>
-                Interactions <RequiredAsterisk>*</RequiredAsterisk>
-              </InputLabel>
-              <Select
-                multiple
-                value={interactions}
-                onChange={(e) => setInteractions(e.target.value)}
-                renderValue={(selected) => selected.join(', ')}
-              >
-                {(postType === 'video' ? interactionOptions : interactionOptions.filter(option => option.value == 'comment')).map((option) => (
-                  <MenuItem key={option.value} value={option.value}>
-                    <Checkbox checked={interactions.includes(option.value)} />
-                    {option.label}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-            <CustomFileInput>
-              <input
-                type="file"
-                accept="video/*,image/*"
-                onChange={handleFileChange}
-              />
-              {videoFile ? 'Change File' : 'Choose File'}
-            </CustomFileInput>
+            {/* preview file  */}
             {videoPreview && (
-              <Box sx={{ width: '100%', mt: 2, maxHeight: 300, border: '1px solid', borderColor: 'divider' }}>
+              <Box sx={{ width: '100%', mt: 2, maxHeight: 300, border: '1px solid', borderColor: 'divider' ,boxShadow:'2px 2px 2px 2px #b2b2b2', borderRadius:'5px'}}>
                 {postType === 'video' ? (
                   <video
                     src={videoPreview}
@@ -388,11 +394,32 @@ export default function TikTokPostUpload({ user }) {
                   <Box
                     component="img"
                     src={videoPreview}
-                    sx={{ width: '100%', maxHeight: 300, objectFit: 'cover', borderRadius: 2, border: '1px solid', borderColor: 'divider' }}
+                    sx={{ width: '100%', maxHeight: 300, objectFit: 'cover', borderRadius: 2, boxShadow:'5px 5px 5px 5px #b2b2b2',border: '1px solid', borderColor: 'divider' }}
                   />
                 )}
               </Box>
             )}
+            {/* preview file  */}
+            <CustomFileInput  >
+              <input
+                
+                type="file"
+                accept="video/*,image/*"
+                onChange={handleFileChange}
+              />
+              {videoFile ? (
+                <Box sx={{marginTop:5}} >
+                <Iconify sx={{boxShadow:'2px 2px 5px 5px #b2b2b2',borderRadius:5,border:'3px solid #fe2c55'}} icon="eva:upload-fill"   color="rgb(24,119,242)" size="48px" height='40px' width='40px' />
+                <Typography sx={{'fontSize':13, my:1}}>Change</Typography>
+                </Box>
+              ) : (
+                <Box sx={{marginTop:5}}>
+                <Iconify sx={{boxShadow:'2px 2px 5px 5px #b2b2b2',borderRadius:5,border:'3px solid #fe2c55'}} icon="eva:upload-fill" color="rgb(24,119,242)" size="48px" height='40px' width='40px' />
+                <Typography sx={{'fontSize':13,my:1}} >Upload</Typography>
+              </Box>
+              )}
+            </CustomFileInput>
+            
             {complianceMessage && (
               <Typography variant="body2" color="textSecondary" sx={{ mt: 2 }}>
                 {complianceMessage}
@@ -400,17 +427,67 @@ export default function TikTokPostUpload({ user }) {
             )}
           </Stack>
         </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose}>Cancel</Button>
-          <Button
-            onClick={handleSubmit}
-            color="primary"
-            variant="contained"
-            disabled={disclosureEnabled && commercialContent.length === 0}
-          >
-            Upload
-          </Button>
-        </DialogActions>
+
+
+
+        <DialogActions sx={{ display: 'flex', justifyContent: 'center' }}>
+  <Button
+    variant="contained"
+    sx={{
+      color: 'white',
+      bgcolor: '#1877f2',
+      marginBottom: '15px',
+      borderRadius: 0,
+      boxShadow: '5px 5px 5px 5px #b2b2b2',
+      border: '1px solid',
+      '&:hover': {
+        bgcolor: '#1877f2', // keep the same background color on hover
+      },
+    }}
+    onClick={handleClose}
+  >
+    Cancel
+  </Button>
+
+  {disclosureEnabled && commercialContent.length === 0 ? (
+    <Tooltip title="To disclose commercial content, you must enable 'Your Brand,' 'Branded Content,' or both." placement="top">
+      <span>
+        <Button
+          sx={{
+            boxShadow: '5px 5px 5px 5px #b2b2b2',
+            border: '1px solid',
+            marginBottom: '15px',
+            color: 'white',
+            bgcolor: "#fe2c55",
+            borderRadius: 0,
+          }}
+          onClick={handleSubmit}
+          variant="contained"
+          disabled
+        >
+          Publish
+        </Button>
+      </span>
+    </Tooltip>
+  ) : (
+    <Button
+      sx={{
+        boxShadow: '5px 5px 5px 5px #b2b2b2',
+        border: '1px solid',
+        marginBottom: '15px',
+        color: 'white',
+        bgcolor: "#fe2c55",
+        borderRadius: 0,
+      }}
+      onClick={handleSubmit}
+      variant="contained"
+      disabled={disclosureEnabled && commercialContent.length === 0}
+    >
+      Publish
+    </Button>
+  )}
+</DialogActions>
+
       </SlimDialog>
     </>
   );
