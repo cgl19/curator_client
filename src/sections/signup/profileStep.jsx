@@ -20,11 +20,19 @@ import { styled } from '@mui/material/styles';
 import { useDispatch } from 'react-redux';
 import apiCall from 'src/utils/api';
 import { loginSuccess } from '../../store/reducers/authSlice';
+import Logo from 'src/components/logo';
+import  './style.module.css';
 // ----------------------------------------------------------------------
 
-const interests = [
-  'Sports', 'Music', 'Movies', 'Traveling', 'Reading', 'Cooking', 'Gaming'
-];
+const style = {
+  width: '100vw',
+  paddingLeft: '0px',
+  paddingRight: '0px',
+  boxSizing: 'border-box'
+}; 
+
+
+const interests = ['Sports', 'Music', 'Movies', 'Traveling', 'Reading', 'Cooking', 'Gaming'];
 
 // Custom styles for OutlinedInput
 const CustomOutlinedInput = styled(OutlinedInput)(({ theme }) => ({
@@ -45,10 +53,9 @@ const RequiredAsterisk = styled(Typography)(({ theme }) => ({
   marginLeft: theme.spacing(0.5),
 }));
 
-export default function SecondProfileStep({email,password}) {
-  
+export default function SecondProfileStep({ email, password }) {
   const theme = useTheme();
-  var navigate = useNavigate();
+  const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const [showPassword, setShowPassword] = useState(false);
@@ -65,12 +72,11 @@ export default function SecondProfileStep({email,password}) {
   const [commonInterests, setCommonInterests] = useState([]);
 
   const handleClick = async () => {
-   
-    if ( !consent || !firstName || !lastName || !country || !language || !gender || !age) {
-      toast.error("Please fill in all fields and given consent");
+    if (!consent || !firstName || !lastName || !country || !language || !gender || !age) {
+      toast.error('Please fill in all fields and give consent');
       return;
     }
-  
+
     try {
       setLoading(true);
       const uri = `${import.meta.env.VITE_BASE_BACKEND_URL}auth/registerClient`;
@@ -84,141 +90,82 @@ export default function SecondProfileStep({email,password}) {
         gender,
         age,
         commonInterests,
-      });  
+      });
 
       if (SignUpRes.status) {
-
-        //logging the signed up user
-        toast.success("Sign up successfull");
+        toast.success('Sign up successful');
         const loginUri = `${import.meta.env.VITE_BASE_BACKEND_URL}auth/login`;
-        let res = await apiCall('post', loginUri, {
+        let res = await apiCall('POST', loginUri, {
           email: email,
           password: password,
         });
-       
-        if (res.status==true) {
-          const loginWait=toast.loading("Getting things ready....");
+
+        if (res.status) {
+          const loginWait = toast.loading('Getting things ready....');
           dispatch(loginSuccess(res));
-          setTimeout(()=>{
+          setTimeout(() => {
             toast.dismiss(loginWait);
             navigate('/');
-          },5000)
-           
-         
-         
+          }, 5000);
+        } else {
+          toast.error('Oops! Network error occurred while redirecting to dashboard');
         }
-        else {
-          toast.error("Oops! Network error occured while redirecting to dashboard");
-        }
-      }
-       else {
-        toast.error("Sign up failed, try again.");
+      } else {
+        toast.error('Sign up failed, try again.');
       }
     } catch (error) {
-      
-      toast.error("Sign up failed, try again.");
+      toast.error('Sign up failed, try again.');
     } finally {
       setLoading(false);
     }
-  }; 
+  };
 
   const renderForm = (
     <>
-     
+      <Logo
+        sx={{
+          position: 'fixed',
+          top: { xs: 16, md: 50 },
+          left: { xs: 16, md: 24 },
+        }}
+      />
       <Grid container spacing={2}>
-        <Grid item xs={6}>
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <TextField
-              name="firstName"
-              label={<Typography variant="body2">First Name</Typography>}
-              value={firstName}
-              onChange={(e) => setFirstName(e.target.value)}
-              fullWidth
-              InputLabelProps={{ shrink: true }}
-            />
-            <RequiredAsterisk variant="body2">*</RequiredAsterisk>
-          </Box>
-        </Grid>
-        <Grid item xs={6}>
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <TextField
-              name="lastName"
-              label={<Typography variant="body2">Last Name</Typography>}
-              value={lastName}
-              onChange={(e) => setLastName(e.target.value)}
-              fullWidth
-              InputLabelProps={{ shrink: true }}
-            />
-            <RequiredAsterisk variant="body2">*</RequiredAsterisk>
-          </Box>
-        </Grid>
-        <Grid item xs={6}>
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <TextField
-              name="country"
-              label={<Typography variant="body2">Country Stay</Typography>}
-              value={country}
-              onChange={(e) => setCountry(e.target.value)}
-              fullWidth
-              InputLabelProps={{ shrink: true }}
-            />
-            <RequiredAsterisk variant="body2">*</RequiredAsterisk>
-          </Box>
-        </Grid>
-        <Grid item xs={6}>
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <TextField
-              name="language"
-              label={<Typography variant="body2">Language</Typography>}
-              value={language}
-              onChange={(e) => setLanguage(e.target.value)}
-              fullWidth
-              InputLabelProps={{ shrink: true }}
-            />
-            <RequiredAsterisk variant="body2">*</RequiredAsterisk>
-          </Box>
-        </Grid>
-        <Grid item xs={6}>
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <TextField
-              name="gender"
-              label={<Typography variant="body2">Gender</Typography>}
-              value={gender}
-              onChange={(e) => setGender(e.target.value)}
-              fullWidth
-              InputLabelProps={{ shrink: true }}
-            />
-            <RequiredAsterisk variant="body2">*</RequiredAsterisk>
-          </Box>
-        </Grid>
-        <Grid item xs={6}>
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <TextField
-              name="age"
-              label={<Typography variant="body2">Age</Typography>}
-              value={age}
-              onChange={(e) => setAge(e.target.value)}
-              fullWidth
-              InputLabelProps={{ shrink: true }}
-            />
-            <RequiredAsterisk variant="body2">*</RequiredAsterisk>
-          </Box>
-        </Grid>
+        {/* Fields for First Name, Last Name, Country, Language, Gender, Age */}
+        {[
+          { label: 'First Name', value: firstName, setter: setFirstName },
+          { label: 'Last Name', value: lastName, setter: setLastName },
+          { label: 'Country Stay', value: country, setter: setCountry },
+          { label: 'Language', value: language, setter: setLanguage },
+          { label: 'Gender', value: gender, setter: setGender },
+          { label: 'Age', value: age, setter: setAge },
+        ].map((field, index) => (
+          <Grid item xs={12} sm={6} key={index}>
+            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+              <TextField
+                name={field.label.toLowerCase().replace(' ', '')}
+                label={
+                  <Typography variant="body2" display="flex" flexDirection="row">
+                    {field.label} <Typography sx={{ color: 'error.main' }}>*</Typography>
+                  </Typography>
+                }
+                value={field.value}
+                onChange={(e) => field.setter(e.target.value)}
+                fullWidth
+                InputLabelProps={{ shrink: true }}
+              />
+            </Box>
+          </Grid>
+        ))}
         <Grid item xs={12}>
           <Typography variant="body2" sx={{ mb: 1, color: 'text.primary' }}>
-          <Grid item xs={12}>
-  <Box sx={{ display: 'flex', alignItems: 'center' }}>
-   
-    <Typography variant="body2" sx={{ color: 'text.primary' }}>
-      Common Interests
-    </Typography>
-    <Typography variant="body2" sx={{ color: 'error.main', mr: 1 }}>
-      *
-    </Typography>
-  </Box>
-</Grid>
-
-         
+            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+              <Typography variant="body2" sx={{ color: 'text.primary' }}>
+                Common Interests
+              </Typography>
+              <Typography variant="body2" sx={{ color: 'error.main', mr: 1 }}>
+                *
+              </Typography>
+            </Box>
           </Typography>
           <Select
             multiple
@@ -241,12 +188,28 @@ export default function SecondProfileStep({email,password}) {
             ))}
           </Select>
         </Grid>
-        <FormControlLabel
-        control={<Checkbox checked={consent} onChange={(e) => setConsent(e.target.checked)} />}
-        label="I agree to the terms and conditions and privacy policy."
-      />
+        <Grid item xs={12}>
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={consent}
+                onChange={(e) => setConsent(e.target.checked)}
+                sx={{ marginLeft: '15px' }}
+              />
+            }
+            label="I agree to the terms, conditions and privacy policy."
+            sx={{
+              '& .MuiFormControlLabel-label': {
+                flexWrap: 'wrap',
+                '@media (max-width: 500px)': {
+                  fontSize: '11px',
+                  lineHeight: '1.2',
+                },
+              },
+            }}
+          />
+        </Grid>
       </Grid>
-
       <LoadingButton
         fullWidth
         size="large"
@@ -260,7 +223,6 @@ export default function SecondProfileStep({email,password}) {
       >
         Submit
       </LoadingButton>
-      
     </>
   );
 
@@ -272,29 +234,38 @@ export default function SecondProfileStep({email,password}) {
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgba(0, 0, 0, 0.8) 100%)',
+        background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgb(255,154,104) 100%)',
+        overflow: 'hidden', // Prevent horizontal scroll
       }}
     >
       <Card
         sx={{
           p: 5,
-          width: '80%',
+          width: '100%',
           maxWidth: 800,
+          boxSizing: 'border-box', // Ensure padding and border are included in the width/height
+          overflow: 'hidden', // Ensure no overflow
         }}
       >
         <Typography variant="h6" gutterBottom>
           User Consent
         </Typography>
-        <Typography variant="body2" gutterBottom>
-          Please read and agree to the terms and conditions and privacy policy to proceed.
+        <Typography
+          variant="body2"
+          gutterBottom
+          sx={{
+            flexWrap: 'wrap',
+            '@media (max-width: 600px)': {
+              fontSize: '9px',
+              lineHeight: '1.2',
+            },
+          }}
+        >
+          Please read and agree to our site terms, conditions, and privacy policy.
         </Typography>
-
-        <Divider sx={{ my: 3 }}>
-          <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-            OR
-          </Typography>
-        </Divider>
-
+  
+        <Divider sx={{ my: 3 }} />
+  
         {renderForm}
       </Card>
     </Box>

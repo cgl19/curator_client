@@ -1,6 +1,11 @@
 import React from 'react';
 import toast from 'react-hot-toast';
 import { Container, Typography, TextField, MenuItem, Box, Avatar, Stack, Grid, useMediaQuery, useTheme, Button, Paper, Autocomplete } from '@mui/material';
+import { useSelector, useDispatch } from 'react-redux';
+
+
+
+
 
 const handleProfileSave=()=>{
     toast.success("Saved Successfully!")
@@ -24,7 +29,7 @@ const languages = [
   { value: 'en', label: 'English' },
   { value: 'ur', label: 'Urdu' },
   { value: 'ar', label: 'Arabic' },
-];  
+];
 
 const interval = [
   { value: '1', label: 'Once in a day' },
@@ -43,16 +48,20 @@ const preferences = [
 ];  
 
 export default function ProfileView() {
+  const user = useSelector((state) => state.auth.user);
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
+  (()=>{
+         console.log(user)
+  })()
 
   return (
-    <Container maxWidth="md" sx={{ mt: 4 }}>
+    <Container maxWidth="md" sx={{ mt: 4 }} >
       <Typography variant="h4" gutterBottom>
         User Profile
       </Typography>
       <Paper elevation={3} sx={{ p: 3, borderRadius: 2 }}>
-        <Box display="flex" justifyContent="center" mb={4}>
+        <Box display="flex" justifyContent="center" mb={4} mt={-10}>
           <Avatar
             alt="User Image"
             src="/assets/images/avatars/avatar_12.jpg" // Add the path to your user image
@@ -64,7 +73,7 @@ export default function ProfileView() {
             <TextField label="Name" variant="outlined" fullWidth />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <TextField label="Email" variant="outlined" fullWidth />
+            <TextField label="Email" value={user.email} variant="outlined" fullWidth />
           </Grid>
           <Grid item xs={12} sm={6}>
             <TextField label="Age" variant="outlined" fullWidth />

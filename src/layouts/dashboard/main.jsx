@@ -17,6 +17,7 @@ export default function Main({ children, sx, ...other }) {
     <Box
       component="main"
       sx={{
+        background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgb(255,154,104)100%)',
         flexGrow: 1,
         minHeight: 1,
         display: 'flex',

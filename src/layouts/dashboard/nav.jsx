@@ -45,6 +45,7 @@ export default function Nav({ openNav, onCloseNav }) {
         display: 'flex',
         borderRadius: 1.5,
         alignItems: 'center',
+        background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgb(255,154,104)100%)',
         bgcolor: (theme) => alpha(theme.palette.grey[500], 0.12),
       }}
     >
@@ -78,6 +79,8 @@ export default function Nav({ openNav, onCloseNav }) {
           height: 1,
           display: 'flex',
           flexDirection: 'column',
+          boxShadow: '15px 15px 15px 15px rgb(232,225,221)',
+          background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgb(255,154,104)100%)',
         },
       }}
     >

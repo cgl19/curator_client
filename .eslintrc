@@ -33,7 +33,7 @@
             "./src"
           ]
         ],
-        "extensions": [
+        "extensions": [ 
           ".js",
           ".jsx",
           ".json"

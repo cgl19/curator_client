@@ -17,11 +17,17 @@ import Iconify from 'src/components/iconify';
 import SecondProfileStep from './profileStep';
 import { bgGradient } from 'src/theme/css';  // Import the bgGradient function
 import './transitionStyles.css';  // Add this import
+import Logo from 'src/components/logo';
+import  './style.module.css';
+
+
 
 export default function SignUpView() {
   const theme = useTheme();
   const navigate = useNavigate();
   
+
+
 
   const [showPassword, setShowPassword] = useState(false);
   const [signUpPassword, setSignUpPassword] = useState('');
@@ -45,7 +51,7 @@ export default function SignUpView() {
       toast.success("Redirecting to Google...");
     }, 5000);
     navigate('/google/auth');
-  };
+  }; 
 
   const handleClick = async () => {
     if (!signUpEmail || !signUpPassword) {
@@ -94,6 +100,7 @@ export default function SignUpView() {
       </Stack>
 
       <LoadingButton
+       sx={{marginTop:'15px'}}
         fullWidth
         size="large"
         type="submit"
@@ -119,9 +126,17 @@ export default function SignUpView() {
           imgUrl: '/assets/background/overlay_4.jpg',
         }),
         height: 1,
-        background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgba(0, 0, 0, 0.8) 100%)',
+        background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgb(255,154,104)100%)',
+        
       }}
-    >
+    > <Logo
+    sx={{
+      position: 'fixed',
+      top: { xs: 16, md: 24 },
+      left: { xs: 16, md: 24 },
+    }}
+  />
+
       <Stack alignItems="center" justifyContent="center" sx={{ height: 1 }}>
         <Card
           sx={{
@@ -131,9 +146,9 @@ export default function SignUpView() {
             position: 'relative',  // Make sure the back button is positioned correctly
           }}
         >
-          <Typography variant="h4">Sign Up To Curator 365</Typography>
+          <Typography sx={{textAlign: 'center'}} variant="h4">Sign Up To Curator 365</Typography>
 
-          <Typography variant="body2" sx={{ mt: 2, mb: 5 }}>
+          <Typography  sx={{textAlign: 'center', mt: 2, mb: 5 }}>
             Already have an account?
             <Link to="/login" variant="subtitle2" sx={{ ml: 0.5 }}>
               Log In
@@ -153,6 +168,7 @@ export default function SignUpView() {
             </Button>
 
             <Button
+            
               onClick={handleFacebookAuth}
               fullWidth
               size="large"
@@ -187,14 +203,29 @@ export default function SignUpView() {
    
    
    {step && (
-     <Box>
+  <Box
+    sx={{
+      height: '100vh',
+      width: '100vw',
+      overflow: 'hidden', // Prevent horizontal scroll
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+    }}
+  >
     <CSSTransition
       in={step}
       timeout={300}
       classNames="fade"
       unmountOnExit
     >
-      <Box>
+      <Box
+        sx={{
+          width: '100%',
+          height: '100%',
+          overflow: 'hidden', // Ensure no overflow
+        }}
+      >
         <IconButton
           onClick={handleBack}
           sx={{ position: 'absolute', top: 16, left: 16 }}
@@ -207,7 +238,7 @@ export default function SignUpView() {
       </Box>
     </CSSTransition>
   </Box>
-  )}
+)}
     </>
   );
 }

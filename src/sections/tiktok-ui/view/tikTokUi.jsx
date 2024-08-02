@@ -298,7 +298,7 @@ export default function TikTokPostUpload() {
         justifyContent: 'center',
         alignItems: 'center',
         minHeight: '100vh',
-        backgroundColor: '#f5f5f5',
+        background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgb(255,154,104)100%)',
         p: 2,
       }}
     >
@@ -488,7 +488,7 @@ export default function TikTokPostUpload() {
                   bgcolor: '#1877f2',
                   marginBottom: '15px',
                   borderRadius: 0,
-                  boxShadow: '5px 5px 5px 5px #b2b2b2',
+                  boxShadow: '2px 2px 2px 2px #b2b2b2',
                   border: '1px solid',
                   '&:hover': {
                     bgcolor: '#1877f2',
@@ -504,7 +504,7 @@ export default function TikTokPostUpload() {
                   <span>
                     <Button
                       sx={{
-                        boxShadow: '5px 5px 5px 5px #b2b2b2',
+                        boxShadow: '2px 2px 2px 2px #b2b2b2',
                         border: '1px solid',
                         marginBottom: '15px',
                         color: 'white',
@@ -521,7 +521,7 @@ export default function TikTokPostUpload() {
               ) : (
                 <Button
                   sx={{
-                    boxShadow: '5px 5px 5px 5px #b2b2b2',
+                    boxShadow: '2px 2px 2px 2px #b2b2b2',
                     border: '1px solid',
                     marginBottom: '15px',
                     color: 'white',

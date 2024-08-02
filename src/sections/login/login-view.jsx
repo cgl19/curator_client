@@ -17,7 +17,6 @@ import { useDispatch } from 'react-redux';
 import apiCall from 'src/utils/api';
 import { loginSuccess } from '../../store/reducers/authSlice';
 import { bgGradient } from 'src/theme/css'; // Ensure this import is correct
-import { useSelector, useDispatch } from 'react-redux';
 import Logo from 'src/components/logo';
 import Iconify from 'src/components/iconify';
 
@@ -60,7 +59,7 @@ export default function LoginView() {
    
     try {  
       setLoading(true);
-      var toastId = toast.loading('Waiting...');
+      var toastId = toast.loading('Logging...');
       const uri=`${import.meta.env.VITE_BASE_BACKEND_URL}auth/login`;
       const res = await apiCall('post', uri, {
         email: loginEmail,
@@ -71,6 +70,7 @@ export default function LoginView() {
       if (res.status) {
         toast.dismiss(toastId);
         try{
+          console.log(res)
           dispatch(loginSuccess(res));
           toast.success("Logged in successfully");
           navigate('/');
@@ -144,13 +144,14 @@ export default function LoginView() {
 
   return (
     <Box
-      sx={{
-        ...bgGradient({
-          color: alpha(theme.palette.background.default, 0.9),
-          imgUrl: '/assets/background/overlay_4.jpg',
-        }),
-        height: 1,
-      }}
+    sx={{
+      ...bgGradient({
+        color: alpha(theme.palette.background.default, 0.9),
+        imgUrl: '/assets/background/overlay_4.jpg',
+      }),
+      height: 1,
+      background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgb(255,154,104)100%)',
+    }}
     >
       <Logo
         sx={{
@@ -161,65 +162,80 @@ export default function LoginView() {
       />
 
       <Stack alignItems="center" justifyContent="center" sx={{ height: 1 }}>
-        <Card
-          sx={{
-            p: 5,
-            width: 1,
-            maxWidth: 420,
-          }}
-        >
-          <Typography variant="h4">Sign in to Curator365</Typography>
+      <Card
+  sx={{
+    p: 5,
+    width: 1,
+    maxWidth: 420,
+  }}
+>
+  <Typography 
+    variant="h4" 
+    sx={{ 
+      textAlign: 'center', 
+      mx: 'auto', 
+      mb: 2 
+    }}
+  >
+    Sign in to Curator365
+  </Typography>
 
-          <Typography variant="body2" sx={{ mt: 2, mb: 5 }}>
-            Don’t have an account?
-            <Link to="/signup" variant="subtitle2" sx={{ ml: 0.5 }}>
-              Get started
-            </Link>
-          </Typography> 
+  <Typography 
+    variant="body2" 
+    sx={{ 
+      textAlign: 'center', 
+      mx: 'auto', 
+      mb: 5 
+    }}
+  >
+    Don’t have an account?
+    <Link to="/signup" variant="subtitle2" sx={{ ml: 0.5 }}>
+      Get started
+    </Link>
+  </Typography> 
 
-          <Stack direction="row" spacing={2}>
-                <Button
+  <Stack direction="row" spacing={2}>
+    <Button
+      onClick={handleGoogleAuth}
+      fullWidth
+      size="large"
+      color="inherit"
+      variant="outlined"
+      sx={{ borderColor: alpha(theme.palette.grey[500], 0.16) }}
+    >
+      <Iconify icon="eva:google-fill" color="#DF3E30" />
+    </Button>
 
-                onClick={handleGoogleAuth}
-                fullWidth
-                size="large"
-                color="inherit"
-                variant="outlined"
-                sx={{ borderColor: alpha(theme.palette.grey[500], 0.16) }}
-                >
-                <Iconify icon="eva:google-fill" color="#DF3E30" />
-                </Button>
+    <Button
+      onClick={handleFacebookAuth}
+      fullWidth
+      size="large"
+      color="inherit"
+      variant="outlined"
+      sx={{ borderColor: alpha(theme.palette.grey[500], 0.16) }}
+    >
+      <Iconify icon="eva:facebook-fill" color="#1877F2" />
+    </Button>
 
-                <Button
-                onClick={handleFacebookAuth}
-                fullWidth
-                size="large"
-                color="inherit"
-                variant="outlined"
-                sx={{ borderColor: alpha(theme.palette.grey[500], 0.16) }}
-                >
-                <Iconify icon="eva:facebook-fill" color="#1877F2" />
-                </Button>
+    {/* <Button
+      fullWidth
+      size="large"
+      color="inherit"
+      variant="outlined"
+      sx={{ borderColor: alpha(theme.palette.grey[500], 0.16) }}
+    >
+      <Iconify icon="eva:twitter-fill" color="#1C9CEA" />
+    </Button> */}
+  </Stack>
 
-            {/* <Button
-              fullWidth
-              size="large"
-              color="inherit"
-              variant="outlined"
-              sx={{ borderColor: alpha(theme.palette.grey[500], 0.16) }}
-            >
-              <Iconify icon="eva:twitter-fill" color="#1C9CEA" />
-            </Button> */}
-          </Stack>
+  <Divider sx={{ my: 3 }}>
+    <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+      OR
+    </Typography>
+  </Divider>
 
-          <Divider sx={{ my: 3 }}>
-            <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-              OR
-            </Typography>
-          </Divider>
-
-          {renderForm}
-        </Card>
+  {renderForm}
+</Card>
       </Stack>
     </Box>
   );
