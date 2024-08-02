@@ -20,6 +20,10 @@ import { FormControlLabel } from '@mui/material';
 import { Switch } from '@mui/material';
 import Iconify from 'src/components/iconify';
 import { Tooltip } from '@mui/material';
+import { useSelector, useDispatch } from 'react-redux';
+
+
+
 
 const privacyOptions = [  
   { value: 'SELF_ONLY', label: 'Private (only me)' },
@@ -76,7 +80,7 @@ const CustomFileInput = styled('label')(({ theme }) => ({
   textAlign: 'center',
   backgroundColor: theme.palette.background.paper,
   cursor: 'pointer',
-  '&:hover': {
+  '&:hover': {  
     backgroundColor: theme.palette.action.hover,
   },
   '& input': {
@@ -90,7 +94,15 @@ const RequiredAsterisk = styled('span')(({ theme }) => ({
   marginLeft: theme.spacing(0.5),
 }));
 
-export default function TikTokPostUpload({ user }) {
+export default function TikTokPostUpload() {
+// Get user data from Redux store
+  const user = useSelector((state) => state.auth.user);
+  const [userAccounts,setuserAccounts]=useState();
+  const [tiktokAccounts,settiktokAccounts]=useState();
+  const [currentAccounts,setcurrentAccounts]=useState();
+  const [accountName,setAccountName]=useState('');
+  const [profilePhoto,setProfilePhoto]=useState('');
+ 
   const [open, setOpen] = useState(true);
   const [title, setTitle] = useState('');
   const [privacy, setPrivacy] = useState('SELF_ONLY');
@@ -102,7 +114,6 @@ export default function TikTokPostUpload({ user }) {
   const [canPost, setCanPost] = useState(true);
   const [disclosureEnabled, setDisclosureEnabled] = useState(false);
   const [complianceMessage, setComplianceMessage] = useState('');
-
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
@@ -187,7 +198,28 @@ export default function TikTokPostUpload({ user }) {
     setCanPost(response.canPost);
   };
 
+  const getUserAccountDetail=async()=>{
+    // Mock API call to get user account details
+    const uri=`${import.meta.env.VITE_BASE_BACKEND_URL}getUserAccounts`;
+    const response = await apiCall('POST', uri,{
+      id:user._id
+    });
+    if(response.accounts){
+      setuserAccounts(response.accounts); //array of objects
+      setAccountName(response.accounts[0]?.name)
+      setProfilePhoto(response.accounts[0]?.avatarUrl)
+      return;
+    }
+    else{
+      setuserAccounts([]);
+      setAccountName('')
+      setProfilePhoto('')
+      return;
+    }
+  }
+
   useEffect(() => {
+   getUserAccountDetail();
     checkPostingCapability();
   }, []);
 
@@ -258,17 +290,41 @@ export default function TikTokPostUpload({ user }) {
     );
   }
 
+  // Get user data from Redux store
   return (
-    <>
-      <SlimDialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
-        <DialogTitle>Post to TikTok</DialogTitle>
-        <DialogContent>
+    <Box
+      sx={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        minHeight: '100vh',
+        backgroundColor: '#f5f5f5',
+        p: 2,
+      }}
+    >
+      <Box
+        sx={{
+          width: '100%',
+          maxWidth: 500,
+          backgroundColor: 'white',
+          borderRadius: 2,
+          boxShadow: 3,
+          p: 3,
+        }}
+      >
+        <form onSubmit={handleSubmit}>
+          <Typography sx={{ color: '#1877f2' }} variant="h6" textAlign="center" gutterBottom>
+            Post to TikTok
+          </Typography>
           <Stack spacing={2}>
+
+
             <Stack direction="row" alignItems="center" spacing={2}>
+            {profilePhoto && (
               <Box
                 component="img"
-                src={user.profilePic}
-                alt="Profile Picture"
+                src={profilePhoto}
+                alt="Profile"
                 sx={{
                   width: 50,
                   height: 50,
@@ -276,21 +332,29 @@ export default function TikTokPostUpload({ user }) {
                   objectFit: 'cover',
                 }}
               />
-              <Typography variant="subtitle1" >{user.nickname}</Typography>
+            )}
+            {accountName &&
+              <Typography variant="subtitle1">{accountName}</Typography>
+            }
             </Stack>
-            <Box sx={{borderRadius:'5px', boxShadow:'2px 2px 2px 2px #b2b2b2'}}>
-            <Typography sx={{fontSize:13,marginLeft:2 }} >Title <RequiredAsterisk>*</RequiredAsterisk></Typography>
-            <SlimTextField
-             placeholder={"Enter title and tags"}
-              fullWidth
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              margin="normal"
-            />
+            <Box sx={{ borderRadius: '5px', boxShadow: '2px 2px 2px 2px #b2b2b2' }}>
+              <Typography sx={{ fontSize: 13, marginLeft: 2 }}>
+                Title <RequiredAsterisk>*</RequiredAsterisk>
+              </Typography>
+              <TextField
+                placeholder="Enter title and tags"
+                fullWidth
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                margin="normal"
+              />
             </Box>
-            <FormControl fullWidth margin="normal" sx={{boxShadow:'2px 2px 2px 2px #b2b2b2',borderRadius:'5px'}} >
-            <Typography sx={{fontSize:13, marginBottom:2,marginLeft:2 }} >Privacy  <RequiredAsterisk>*</RequiredAsterisk></Typography>
-              <Select value={privacy} onChange={handlePrivacyChange}>
+
+            <FormControl fullWidth margin="normal" sx={{ boxShadow: '2px 2px 2px 2px #b2b2b2', borderRadius: '5px' }}>
+              <Typography sx={{ fontSize: 13, marginBottom: 2, marginLeft: 2 }}>
+                Privacy <RequiredAsterisk>*</RequiredAsterisk>
+              </Typography>
+              <Select value={privacy} onChange={handlePrivacyChange} fullWidth>
                 {privacyOptions.map((option) => (
                   <MenuItem key={option.value} value={option.value}>
                     {option.label}
@@ -299,24 +363,24 @@ export default function TikTokPostUpload({ user }) {
               </Select>
             </FormControl>
 
-  <FormControl fullWidth margin="normal">
-        <Box sx={{ my: 1,boxShadow:'2px 2px 2px 2px #b2b2b2',borderRadius:'5px' }}>
-        <Switch
-          checked={disclosureEnabled}
-          onChange={handleDisclosureToggle}
-        />
-        <Typography sx={{ mx: 2,fontSize:13 }} variant="body2" color="textSecondary">
-          Disclose Commercial Content <RequiredAsterisk>*</RequiredAsterisk>
-        </Typography>
-      </Box>
+            <FormControl fullWidth margin="normal">
+              <Box sx={{ my: 1, boxShadow: '2px 2px 2px 2px #b2b2b2', borderRadius: '5px' }}>
+                <Switch
+                  checked={disclosureEnabled}
+                  onChange={handleDisclosureToggle}
+                />
+                <Typography sx={{ mx: 2, fontSize: 13 }} variant="body2" color="textSecondary">
+                  Disclose Commercial Content <RequiredAsterisk>*</RequiredAsterisk>
+                </Typography>
+              </Box>
 
-              <Box sx={{ my: 1,boxShadow:'2px 2px 2px 2px #b2b2b2',borderRadius:'5px' }}>
+              <Box sx={{ my: 1, boxShadow: '2px 2px 2px 2px #b2b2b2', borderRadius: '5px' }}>
                 {commercialContentOptions.map((option) => (
                   <FormControlLabel
                     key={option.value}
                     control={
                       <Switch
-                         sx={{fontSize:13, marginLeft:1 }}
+                        sx={{ fontSize: 13, marginLeft: 1 }}
                         checked={commercialContent.includes(option.value)}
                         onChange={(e) => {
                           if (e.target.checked) {
@@ -334,56 +398,53 @@ export default function TikTokPostUpload({ user }) {
               </Box>
 
               {disclosureEnabled && commercialContent.length === 0 && (
-                <Typography variant="body2" color="error" sx={{ mt: 1, mx:1 }}>
+                <Typography variant="body2" color="error" sx={{ mt: 1, mx: 1 }}>
                   You need to indicate if your content promotes yourself, a third party, or both.
                 </Typography>
               )}
               {commercialContent.includes('your_brand') && (
-              <Typography variant="body2" color="textSecondary" sx={{ mt: 1, mx: 1 }}>
-              Your photo/video will be labeled as <span style={{ color: 'rgb(24,119,242)' }}>'Promotional content'</span>.
-            </Typography>
+                <Typography variant="body2" color="textSecondary" sx={{ mt: 1, mx: 1 }}>
+                  Your photo/video will be labeled as <span style={{ color: 'rgb(24,119,242)' }}>'Promotional content'</span>.
+                </Typography>
               )}
               {commercialContent.includes('branded_content') && (
                 <Typography variant="body2" color="textSecondary" sx={{ mt: 1, mx: 1 }}>
-                  Your photo/video will be labeled as  <span style={{ color: 'rgb(24,119,242)' }}>'Paid partnership'</span>.
-              </Typography>
+                  Your photo/video will be labeled as <span style={{ color: 'rgb(24,119,242)' }}>'Paid partnership'</span>.
+                </Typography>
               )}
             </FormControl>
 
+            <Box sx={{ boxShadow: '2px 2px 2px 2px #b2b2b2', borderRadius: '5px' }}>
+              <InputLabel sx={{ fontSize: 13, marginBottom: 2, marginLeft: 2 }}>
+                Interactions <RequiredAsterisk>*</RequiredAsterisk>
+              </InputLabel>
+              <FormControl fullWidth margin="normal">
+                <Stack direction="row" spacing={2}>
+                  {interactionOptions.map((option) => (
+                    <FormControlLabel
+                      key={option.value}
+                      control={
+                        <Checkbox
+                          checked={interactions.includes(option.value)}
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              setInteractions([...interactions, option.value]);
+                            } else {
+                              setInteractions(interactions.filter((value) => value !== option.value));
+                            }
+                          }}
+                          disabled={postType === 'photo' && option.value !== 'comment'}
+                        />
+                      }
+                      label={option.label}
+                    />
+                  ))}
+                </Stack>
+              </FormControl>
+            </Box>
 
-<Box sx={{boxShadow:'2px 2px 2px 2px #b2b2b2', borderRadius:'5px'}}>
-  <InputLabel sx={{fontSize:13, marginBottom:2,marginLeft:2 }}>Interactions <RequiredAsterisk>*</RequiredAsterisk></InputLabel>
-   <FormControl fullWidth margin="normal" >
-            
-  <Stack direction="row" spacing={2}>
-    {interactionOptions.map((option) => (
-      <FormControlLabel
-        key={option.value}
-        control={
-          <Checkbox
-            checked={interactions.includes(option.value)}
-            onChange={(e) => {
-              if (e.target.checked) {
-                setInteractions([...interactions, option.value]);
-              } else {
-                setInteractions(interactions.filter((value) => value !== option.value));
-              }
-            }}
-            disabled={postType === 'photo' && option.value !== 'comment'}
-          />
-        }
-        label={option.label}
-      />
-    ))}
-  </Stack>
-</FormControl>
-</Box>
-           
-            
-
-            {/* preview file  */}
             {videoPreview && (
-              <Box sx={{ width: '100%', mt: 2, maxHeight: 300, border: '1px solid', borderColor: 'divider' ,boxShadow:'2px 2px 2px 2px #b2b2b2', borderRadius:'5px'}}>
+              <Box sx={{ width: '100%', mt: 2, maxHeight: 300, border: '1px solid', borderColor: 'divider', boxShadow: '2px 2px 2px 2px #b2b2b2', borderRadius: '5px' }}>
                 {postType === 'video' ? (
                   <video
                     src={videoPreview}
@@ -394,108 +455,97 @@ export default function TikTokPostUpload({ user }) {
                   <Box
                     component="img"
                     src={videoPreview}
-                    sx={{ width: '100%', maxHeight: 300, objectFit: 'cover', borderRadius: 2, boxShadow:'5px 5px 5px 5px #b2b2b2',border: '1px solid', borderColor: 'divider' }}
+                    sx={{ width: '100%', maxHeight: 300, objectFit: 'cover', borderRadius: 2, boxShadow: '5px 5px 5px 5px #b2b2b2', border: '1px solid', borderColor: 'divider' }}
                   />
                 )}
               </Box>
             )}
-            {/* preview file  */}
-            <CustomFileInput  >
+
+            <CustomFileInput>
               <input
-                
                 type="file"
                 accept="video/*,image/*"
                 onChange={handleFileChange}
+                style={{ display: 'none' }}
               />
-              {videoFile ? (
-                <Box sx={{marginTop:5}} >
-                <Iconify sx={{boxShadow:'2px 2px 5px 5px #b2b2b2',borderRadius:5,border:'3px solid #fe2c55'}} icon="eva:upload-fill"   color="rgb(24,119,242)" size="48px" height='40px' width='40px' />
-                <Typography sx={{'fontSize':13, my:1}}>Change</Typography>
-                </Box>
-              ) : (
-                <Box sx={{marginTop:5}}>
-                <Iconify sx={{boxShadow:'2px 2px 5px 5px #b2b2b2',borderRadius:5,border:'3px solid #fe2c55'}} icon="eva:upload-fill" color="rgb(24,119,242)" size="48px" height='40px' width='40px' />
-                <Typography sx={{'fontSize':13,my:1}} >Upload</Typography>
+              <Box sx={{ marginTop: 5, textAlign: 'center' }}>
+                <Iconify sx={{ boxShadow: '2px 2px 5px 5px #b2b2b2', borderRadius: 5, border: '3px solid #fe2c55' }} icon="eva:upload-fill" color="rgb(24,119,242)" size="48px" height="40px" width="40px" />
+                <Typography sx={{ fontSize: 13, my: 1 }}>{videoFile ? 'Change' : 'Upload'}</Typography>
               </Box>
-              )}
             </CustomFileInput>
-            
+
             {complianceMessage && (
               <Typography variant="body2" color="textSecondary" sx={{ mt: 2 }}>
                 {complianceMessage}
               </Typography>
             )}
+
+            <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+              <Button
+                variant="contained"
+                sx={{
+                  color: 'white',
+                  bgcolor: '#1877f2',
+                  marginBottom: '15px',
+                  borderRadius: 0,
+                  boxShadow: '5px 5px 5px 5px #b2b2b2',
+                  border: '1px solid',
+                  '&:hover': {
+                    bgcolor: '#1877f2',
+                  },
+                }}
+                onClick={handleClose}
+              >
+                Cancel
+              </Button>
+
+              {disclosureEnabled && commercialContent.length === 0 ? (
+                <Tooltip title="To disclose commercial content, you must enable 'Your Brand,' 'Branded Content,' or both." placement="top">
+                  <span>
+                    <Button
+                      sx={{
+                        boxShadow: '5px 5px 5px 5px #b2b2b2',
+                        border: '1px solid',
+                        marginBottom: '15px',
+                        color: 'white',
+                        bgcolor: "#fe2c55",
+                        borderRadius: 0,
+                      }}
+                      variant="contained"
+                      disabled
+                    >
+                      Publish
+                    </Button>
+                  </span>
+                </Tooltip>
+              ) : (
+                <Button
+                  sx={{
+                    boxShadow: '5px 5px 5px 5px #b2b2b2',
+                    border: '1px solid',
+                    marginBottom: '15px',
+                    color: 'white',
+                    bgcolor: "#fe2c55",
+                    borderRadius: 0,
+                  }}
+                  type="submit"
+                  variant="contained"
+                  disabled={disclosureEnabled && commercialContent.length === 0}
+                >
+                  Publish
+                </Button>
+              )}
+            </Box>
           </Stack>
-        </DialogContent>
-
-
-
-        <DialogActions sx={{ display: 'flex', justifyContent: 'center' }}>
-  <Button
-    variant="contained"
-    sx={{
-      color: 'white',
-      bgcolor: '#1877f2',
-      marginBottom: '15px',
-      borderRadius: 0,
-      boxShadow: '5px 5px 5px 5px #b2b2b2',
-      border: '1px solid',
-      '&:hover': {
-        bgcolor: '#1877f2', // keep the same background color on hover
-      },
-    }}
-    onClick={handleClose}
-  >
-    Cancel
-  </Button>
-
-  {disclosureEnabled && commercialContent.length === 0 ? (
-    <Tooltip title="To disclose commercial content, you must enable 'Your Brand,' 'Branded Content,' or both." placement="top">
-      <span>
-        <Button
-          sx={{
-            boxShadow: '5px 5px 5px 5px #b2b2b2',
-            border: '1px solid',
-            marginBottom: '15px',
-            color: 'white',
-            bgcolor: "#fe2c55",
-            borderRadius: 0,
-          }}
-          onClick={handleSubmit}
-          variant="contained"
-          disabled
-        >
-          Publish
-        </Button>
-      </span>
-    </Tooltip>
-  ) : (
-    <Button
-      sx={{
-        boxShadow: '5px 5px 5px 5px #b2b2b2',
-        border: '1px solid',
-        marginBottom: '15px',
-        color: 'white',
-        bgcolor: "#fe2c55",
-        borderRadius: 0,
-      }}
-      onClick={handleSubmit}
-      variant="contained"
-      disabled={disclosureEnabled && commercialContent.length === 0}
-    >
-      Publish
-    </Button>
-  )}
-</DialogActions>
-
-      </SlimDialog>
-    </>
+        </form>
+      </Box>
+    </Box>
   );
 }
 
-TikTokPostUpload.propTypes = {
-  user: PropTypes.shape({
-    nickname: PropTypes.string.isRequired,
-    profilePic: PropTypes.string.isRequired,
-  }).isRequired,
-};
+// TikTokPostUpload.propTypes = {
+//   user: PropTypes.shape({
+//     nickname: PropTypes.string.isRequired,
+//     profilePic: PropTypes.string.isRequired,
+//   }).isRequired,
+// };
