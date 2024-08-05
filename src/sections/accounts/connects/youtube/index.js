@@ -1,1 +1,1 @@
-export {YouTubePage} from './youtube';
+export {default as YoutubePage} from './youtube';

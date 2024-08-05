@@ -17,16 +17,15 @@ import AppCurrentSubject from '../app-current-subject';
 import AppConversionRates from '../app-conversion-rates';
 import { useSelector } from 'react-redux';
 
-export default function AppView() {
+export default function AppView() { 
   const user = useSelector(state => state.auth.user);
-  console.log(user);
+ 
 
-  return (
+  return (  
     <Container maxWidth="xl" sx={{ height: '100%', overflow: 'hidden' }}>
       <Typography variant="h4" sx={{ mb: 5 }}>
         Hi, Welcome back 👋
-      </Typography>
-
+      </Typography> 
       <Grid container spacing={3} sx={{ height: '100%' }}>
         <Grid xs={12} sm={6} md={3}>
           <AppWidgetSummary
@@ -34,8 +33,8 @@ export default function AppView() {
             total={71}
             color="success"
             icon={<img alt="icon" src="/assets/icons/glass/ic_glass_bag.png" />}
-          />
-        </Grid>
+          /> 
+        </Grid> 
 
         <Grid xs={12} sm={6} md={3}>
           <AppWidgetSummary
@@ -62,9 +61,9 @@ export default function AppView() {
             color="error"
             icon={<img alt="icon" src="/assets/icons/glass/ic_glass_message.png" />}
           />
-        </Grid>
+        </Grid> 
 
-        <Grid xs={12} md={6} lg={8}>
+        <Grid xs={12} md={6} lg={8}> 
           <AppWebsiteVisits
             title="Total Posts"
             chart={{
