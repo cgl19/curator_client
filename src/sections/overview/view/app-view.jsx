@@ -3,7 +3,6 @@ import { faker } from '@faker-js/faker';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Unstable_Grid2';
 import Typography from '@mui/material/Typography';
-
 import Iconify from 'src/components/iconify';
 
 import AppTasks from '../app-tasks';
@@ -17,15 +16,15 @@ import AppCurrentSubject from '../app-current-subject';
 import AppConversionRates from '../app-conversion-rates';
 import { useSelector } from 'react-redux';
 
-export default function AppView() { 
+export default function AppView() {
   const user = useSelector(state => state.auth.user);
  
 
-  return (  
+  return (
     <Container maxWidth="xl" sx={{ height: '100%', overflow: 'hidden' }}>
       <Typography variant="h4" sx={{ mb: 5 }}>
         Hi, Welcome back 👋
-      </Typography> 
+      </Typography>
       <Grid container spacing={3} sx={{ height: '100%' }}>
         <Grid xs={12} sm={6} md={3}>
           <AppWidgetSummary
@@ -34,8 +33,7 @@ export default function AppView() {
             color="success"
             icon={<img alt="icon" src="/assets/icons/glass/ic_glass_bag.png" />}
           /> 
-        </Grid> 
-
+        </Grid>
         <Grid xs={12} sm={6} md={3}>
           <AppWidgetSummary
             title="Total Posts"
@@ -44,7 +42,6 @@ export default function AppView() {
             icon={<img alt="icon" src="/assets/icons/glass/ic_glass_users.png" />}
           />
         </Grid>
-
         <Grid xs={12} sm={6} md={3}>
           <AppWidgetSummary
             title="Pending Posts"
@@ -53,7 +50,6 @@ export default function AppView() {
             icon={<img alt="icon" src="/assets/icons/glass/ic_glass_buy.png" />}
           />
         </Grid>
-
         <Grid xs={12} sm={6} md={3}>
           <AppWidgetSummary
             title="Scheduled Posts"
@@ -105,12 +101,11 @@ export default function AppView() {
             }}
           />
         </Grid>
-
         <Grid xs={12} md={6} lg={4}>
           <AppCurrentVisits
             title="Current Insights"
             chart={{
-              series: [
+              series: [ 
                 { label: 'Total Posts', value: 4344 },
                 { label: 'Pending Posts', value: 5435 },
                 { label: 'Scheduled Posts', value: 1443 },
@@ -121,7 +116,7 @@ export default function AppView() {
         </Grid>
       </Grid>
     </Container>
-  );
+  ); 
 }
 
 
@@ -130,7 +125,7 @@ export default function AppView() {
             title="Conversion Rates"
             subheader="(+43%) than last year"
             chart={{
-              series: [
+              series: [ 
                 { label: 'Italy', value: 400 },
                 { label: 'Japan', value: 430 },
                 { label: 'China', value: 448 },

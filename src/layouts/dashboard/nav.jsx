@@ -8,24 +8,25 @@ import Avatar from '@mui/material/Avatar';
 import { alpha } from '@mui/material/styles';
 import Typography from '@mui/material/Typography'; 
 import ListItemButton from '@mui/material/ListItemButton';
-
 import { usePathname } from 'src/routes/hooks'; 
 import { RouterLink } from 'src/routes/components';
 
 import { useResponsive } from 'src/hooks/use-responsive';
 
-import { account } from 'src/_mock/account';
 
 import Logo from 'src/components/logo';
 import Scrollbar from 'src/components/scrollbar';
- 
+import { useSelector } from 'react-redux';
 import { NAV } from './config-layout';
 import navConfig from './config-navigation';
 
 // ----------------------------------------------------------------------
 export default function Nav({ openNav, onCloseNav }) {
-  const pathname = usePathname();
+  const account = useSelector((state) => state.auth.user);
 
+  
+
+  const pathname = usePathname();
   const upLg = useResponsive('up', 'lg');
 
   useEffect(() => {
@@ -51,7 +52,7 @@ export default function Nav({ openNav, onCloseNav }) {
     >
       <Avatar src={account.photoURL} alt="photoURL" />
       <Box sx={{ ml: 2 }}>
-        <Typography variant="subtitle2">{account.displayName}</Typography>
+        <Typography variant="subtitle2">{account.fullName}</Typography>
 
         <Typography variant="body2" sx={{ color: 'text.secondary' }}>
           {account.role}

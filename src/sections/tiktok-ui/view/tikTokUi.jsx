@@ -147,6 +147,7 @@ export default function TikTokPostUpload() {
     }
 };
   const handleSubmit = async () => {
+   
     if (!videoFile) {
       alert('Please select a file.');
       return;
@@ -175,18 +176,19 @@ export default function TikTokPostUpload() {
     // Perform the upload and TikTok post creation here
     try {
       const formData = new FormData();
+      formData.append('user_id',user._id); 
       formData.append('file', videoFile);
       formData.append('title', title);
       formData.append('privacy', privacy);
       formData.append('interactions', interactions);
       formData.append('commercialContent', commercialContent);
-
-      const response = await apiCall('POST', 'your-api-endpoint/tiktok/upload', formData, {
+      const uri=`${import.meta.env.VITE_BASE_BACKEND_URL}tiktokMedia`;
+      const response = await apiCall('POST',uri, formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
-
       console.log('Upload successful:', response);
-      handleClose();
+      alert("jfkajdsfkljaslf")
+     // handleClose();
     } catch (error) {
       console.error('Upload error:', error);
     }
@@ -205,6 +207,7 @@ export default function TikTokPostUpload() {
       id:user._id
     });
     if(response.accounts){
+      console.log(response.accounts)
       setuserAccounts(response.accounts); //array of objects
       setAccountName(response.accounts[0]?.name)
       setProfilePhoto(response.accounts[0]?.avatarUrl)
@@ -312,7 +315,7 @@ export default function TikTokPostUpload() {
           p: 3,
         }}
       >
-        <form onSubmit={handleSubmit}>
+        <form >
           <Typography sx={{ color: '#1877f2' }} variant="h6" textAlign="center" gutterBottom>
             Post to TikTok
           </Typography>
@@ -503,6 +506,7 @@ export default function TikTokPostUpload() {
                 <Tooltip title="To disclose commercial content, you must enable 'Your Brand,' 'Branded Content,' or both." placement="top">
                   <span>
                     <Button
+                    
                       sx={{
                         boxShadow: '2px 2px 2px 2px #b2b2b2',
                         border: '1px solid',
@@ -520,6 +524,7 @@ export default function TikTokPostUpload() {
                 </Tooltip>
               ) : (
                 <Button
+                onClick={handleSubmit}
                   sx={{
                     boxShadow: '2px 2px 2px 2px #b2b2b2',
                     border: '1px solid',
@@ -528,7 +533,7 @@ export default function TikTokPostUpload() {
                     bgcolor: "#fe2c55",
                     borderRadius: 0,
                   }}
-                  type="submit"
+                  type="button"
                   variant="contained"
                   disabled={disclosureEnabled && commercialContent.length === 0}
                 >
