@@ -96,7 +96,7 @@ export default function ProfileView() {
               label={<span>Gender <span style={{ color: 'red' }}>*</span></span>}
               value={user.gender}
               variant="outlined"
-              select
+             
               fullWidth
              
             >
@@ -142,7 +142,7 @@ export default function ProfileView() {
           <Grid item xs={12} sm={12}>
             <TextField
              value={user?.interval}
-               label={<span>Interval <span style={{ color: 'red' }}>*</span></span>}
+              label={<span>Interval <span style={{ color: 'red' }}>*</span></span>}
               variant="outlined"
               select
               fullWidth

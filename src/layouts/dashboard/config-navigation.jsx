@@ -33,10 +33,11 @@ const navConfig = [
     icon: icon('album'),
   },
   {
-    title: 'Tiktok Post',
+    title: 'Publish to Tiktok',
     path: '/tiktok/postupload',
     icon: icon('ic_tiktok'),
   },
 ];
 
 export default navConfig;
+ 

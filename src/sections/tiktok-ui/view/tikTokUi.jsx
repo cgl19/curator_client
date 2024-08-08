@@ -187,7 +187,7 @@ export default function TikTokPostUpload() {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
       console.log('Upload successful:', response);
-      alert("jfkajdsfkljaslf")
+      
      // handleClose();
     } catch (error) {
       console.error('Upload error:', error);
@@ -301,48 +301,49 @@ export default function TikTokPostUpload() {
         justifyContent: 'center',
         alignItems: 'center',
         minHeight: '100vh',
-        background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgb(255,154,104)100%)',
+        background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgb(255,154,104) 100%)',
         p: 2,
       }}
     >
       <Box
         sx={{
           width: '100%',
-          maxWidth: 500,
+          maxWidth: '100%',
           backgroundColor: 'white',
           borderRadius: 2,
           boxShadow: 3,
           p: 3,
+          '@media (max-width:600px)': {
+            maxWidth: '100%',
+            p: 1,
+          },
         }}
       >
-        <form >
+        <form>
           <Typography sx={{ color: '#1877f2' }} variant="h6" textAlign="center" gutterBottom>
             Post to TikTok
           </Typography>
           <Stack spacing={2}>
-
-
             <Stack direction="row" alignItems="center" spacing={2}>
-            {profilePhoto && (
-              <Box
-                component="img"
-                src={profilePhoto}
-                alt="Profile"
-                sx={{
-                  width: 50,
-                  height: 50,
-                  borderRadius: '50%',
-                  objectFit: 'cover',
-                }}
-              />
-            )}
-            {accountName &&
-              <Typography variant="subtitle1">{accountName}</Typography>
-            }
+              {profilePhoto && (
+                <Box
+                  component="img"
+                  src={profilePhoto}
+                  alt="Profile"
+                  sx={{
+                    width: 50,
+                    height: 50,
+                    borderRadius: '50%',
+                    objectFit: 'cover',
+                  }}
+                />
+              )}
+              {accountName && <Typography variant="subtitle1">{accountName}</Typography>}
             </Stack>
+  
             <Box sx={{ borderRadius: '5px', boxShadow: '2px 2px 2px 2px #b2b2b2' }}>
               <Typography sx={{ fontSize: 13, marginLeft: 2 }}>
-                Title <RequiredAsterisk>*</RequiredAsterisk>
+                Post Title <RequiredAsterisk>*</RequiredAsterisk>
               </Typography>
               <TextField
                 placeholder="Enter title and tags"
@@ -352,7 +353,7 @@ export default function TikTokPostUpload() {
                 margin="normal"
               />
             </Box>
-
+  
             <FormControl fullWidth margin="normal" sx={{ boxShadow: '2px 2px 2px 2px #b2b2b2', borderRadius: '5px' }}>
               <Typography sx={{ fontSize: 13, marginBottom: 2, marginLeft: 2 }}>
                 Privacy <RequiredAsterisk>*</RequiredAsterisk>
@@ -365,7 +366,7 @@ export default function TikTokPostUpload() {
                 ))}
               </Select>
             </FormControl>
-
+  
             <FormControl fullWidth margin="normal">
               <Box sx={{ my: 1, boxShadow: '2px 2px 2px 2px #b2b2b2', borderRadius: '5px' }}>
                 <Switch
@@ -376,7 +377,7 @@ export default function TikTokPostUpload() {
                   Disclose Commercial Content <RequiredAsterisk>*</RequiredAsterisk>
                 </Typography>
               </Box>
-
+  
               <Box sx={{ my: 1, boxShadow: '2px 2px 2px 2px #b2b2b2', borderRadius: '5px' }}>
                 {commercialContentOptions.map((option) => (
                   <FormControlLabel
@@ -399,7 +400,7 @@ export default function TikTokPostUpload() {
                   />
                 ))}
               </Box>
-
+  
               {disclosureEnabled && commercialContent.length === 0 && (
                 <Typography variant="body2" color="error" sx={{ mt: 1, mx: 1 }}>
                   You need to indicate if your content promotes yourself, a third party, or both.
@@ -416,7 +417,7 @@ export default function TikTokPostUpload() {
                 </Typography>
               )}
             </FormControl>
-
+  
             <Box sx={{ boxShadow: '2px 2px 2px 2px #b2b2b2', borderRadius: '5px' }}>
               <InputLabel sx={{ fontSize: 13, marginBottom: 2, marginLeft: 2 }}>
                 Interactions <RequiredAsterisk>*</RequiredAsterisk>
@@ -445,9 +446,9 @@ export default function TikTokPostUpload() {
                 </Stack>
               </FormControl>
             </Box>
-
+  
             {videoPreview && (
-              <Box sx={{ width: '100%', mt: 2, maxHeight: 300, border: '1px solid', borderColor: 'divider', boxShadow: '2px 2px 2px 2px #b2b2b2', borderRadius: '5px' }}>
+              <Box sx={{ width: '100%', mt: 2, maxHeight: 600, border: '1px solid', borderColor: 'divider', boxShadow: '2px 2px 2px 2px #b2b2b2', borderRadius: '5px' }}>
                 {postType === 'video' ? (
                   <video
                     src={videoPreview}
@@ -463,26 +464,28 @@ export default function TikTokPostUpload() {
                 )}
               </Box>
             )}
-
+  
             <CustomFileInput>
               <input
                 type="file"
                 accept="video/*,image/*"
                 onChange={handleFileChange}
                 style={{ display: 'none' }}
+                
+                
               />
               <Box sx={{ marginTop: 5, textAlign: 'center' }}>
                 <Iconify sx={{ boxShadow: '2px 2px 5px 5px #b2b2b2', borderRadius: 5, border: '3px solid #fe2c55' }} icon="eva:upload-fill" color="rgb(24,119,242)" size="48px" height="40px" width="40px" />
                 <Typography sx={{ fontSize: 13, my: 1 }}>{videoFile ? 'Change' : 'Upload'}</Typography>
               </Box>
             </CustomFileInput>
-
+  
             {complianceMessage && (
               <Typography variant="body2" color="textSecondary" sx={{ mt: 2 }}>
                 {complianceMessage}
               </Typography>
             )}
-
+  
             <Box sx={{ display: 'flex', justifyContent: 'center' }}>
               <Button
                 variant="contained"
@@ -501,12 +504,11 @@ export default function TikTokPostUpload() {
               >
                 Cancel
               </Button>
-
+  
               {disclosureEnabled && commercialContent.length === 0 ? (
                 <Tooltip title="To disclose commercial content, you must enable 'Your Brand,' 'Branded Content,' or both." placement="top">
                   <span>
                     <Button
-                    
                       sx={{
                         boxShadow: '2px 2px 2px 2px #b2b2b2',
                         border: '1px solid',
@@ -524,7 +526,7 @@ export default function TikTokPostUpload() {
                 </Tooltip>
               ) : (
                 <Button
-                onClick={handleSubmit}
+                  onClick={handleSubmit}
                   sx={{
                     boxShadow: '2px 2px 2px 2px #b2b2b2',
                     border: '1px solid',

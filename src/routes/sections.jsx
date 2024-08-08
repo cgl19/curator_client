@@ -46,6 +46,10 @@ export default function Router() {
         { path: 'calendar', element: <PrivateRoute element={<CalendarPage />} /> },
         { path: 'media', element: <PrivateRoute element={<MediaPage />} /> },
         { path: 'profile', element: <PrivateRoute element={<ProfilePage />} /> },
+        {
+          path: 'tiktok/postupload',
+          element: <TikTokPostUploadPage />,
+        },
       ],
     },
     {
@@ -89,10 +93,7 @@ export default function Router() {
       path: 'connection/youtube',
       element: <YoutubeConnection />,
     },
-    {
-      path: 'tiktok/postupload',
-      element: <TikTokPostUploadPage />,
-    },
+    
     {
       path: 'logout',
       element: <LogoutPage />,
