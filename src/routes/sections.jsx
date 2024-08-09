@@ -23,6 +23,8 @@ export const LinkedInConnection = lazy(() => import('src/pages/accountsConnectio
 export const TikTokConnection = lazy(() => import('src/pages/accountsConnection/tiktok'));
 export const YoutubeConnection = lazy(() => import('src/pages/accountsConnection/youtube'));
 export const TikTokPostUploadPage = lazy(() => import('src/pages/tikTokPostUpload'));
+export const LoaderCheckPage = lazy(() => import('src/sections/loaderCheck/index'));
+
 //  social auth
 export const GoogleAuthPage = lazy(() => import('src/pages/socialAuth/google'));
 export const FacebookAuthPage = lazy(() => import('src/pages/socialAuth/facebook'));
@@ -106,6 +108,10 @@ export default function Router() {
       path: '*',
       element: <Navigate to="/404" replace />,
     },
+    {
+      path:'loader-check',
+      element:<LoaderCheckPage />,
+    }
   ]);
 
   return routes;

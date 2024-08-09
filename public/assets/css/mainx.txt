@@ -1,0 +1,39 @@
+
+body {
+  cursor: none; /* Hide the default cursor */
+}
+
+
+.custom-cursor {
+  position: fixed;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgb(136, 118, 238) 30%, rgb(136, 118, 238) 70%);
+  box-shadow: 0 0 50px rgb(241, 88, 43); /* Initial glow effect */
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  transition: transform 0.1s ease-out;
+  animation: pulse 1.5s infinite; /* Pulsating animation */
+}
+
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 10px rgb(241, 88, 43);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 0 20px rgb(241, 88, 43);
+    transform: scale(1.2);
+  }
+  100% {
+    box-shadow: 0 0 10px rgb(241, 88, 43);
+    transform: scale(1);
+  }
+}
+
+.custom-cursor:hover {
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.8) 30%, rgba(0, 0, 0, 0.5) 70%);
+  box-shadow: 0 0 20px rgb(241, 88, 43); /* More intense glow on hover */
+}

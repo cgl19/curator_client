@@ -17,11 +17,11 @@ import DialogContent from '@mui/material/DialogContent';
 import apiCall from 'src/utils/api';
 import { styled } from '@mui/material/styles';
 import { FormControlLabel } from '@mui/material';
-import { Switch } from '@mui/material';
+import { Switch } from '@mui/material'; 
 import Iconify from 'src/components/iconify';
 import { Tooltip } from '@mui/material';
 import { useSelector, useDispatch } from 'react-redux';
-
+import { ColorRing } from 'react-loader-spinner';
 
 
 
@@ -103,6 +103,7 @@ export default function TikTokPostUpload() {
   const [accountName,setAccountName]=useState('');
   const [profilePhoto,setProfilePhoto]=useState('');
  
+
   const [open, setOpen] = useState(true);
   const [title, setTitle] = useState('');
   const [privacy, setPrivacy] = useState('SELF_ONLY');
@@ -116,6 +117,8 @@ export default function TikTokPostUpload() {
   const [complianceMessage, setComplianceMessage] = useState('');
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+const [loaderVisiblity, setloaderVisiblity]=useState(false);
+
 
   const handleFileChange = (event) => {
     const file = event.target.files[0];
@@ -147,7 +150,8 @@ export default function TikTokPostUpload() {
     }
 };
   const handleSubmit = async () => {
-   
+     setloaderVisiblity(true); //setting loader true
+ 
     if (!videoFile) {
       alert('Please select a file.');
       return;
@@ -305,6 +309,8 @@ export default function TikTokPostUpload() {
         p: 2,
       }}
     >
+
+ 
       <Box
         sx={{
           width: '100%',
