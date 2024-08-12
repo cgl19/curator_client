@@ -8,11 +8,6 @@ const LoaderContext = createContext();
 
 export const LoaderProvider = ({ children }) => {
   const [isLoading] = useState(false);
-
-  
-
-
-
   return (
     <LoaderContext.Provider value={isLoading}>
       {children}

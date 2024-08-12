@@ -25,51 +25,61 @@ import { ColorRing } from 'react-loader-spinner';
 
 
 
-const privacyOptions = [  
-  { value: 'SELF_ONLY', label: 'Private (only me)' },
-  { value: 'FRIENDS', label: 'Friends' },
-  { value: 'PUBLIC', label: 'Public' },
-];    
 
-const interactionOptions = [ 
-  { value: 'comment', label: 'Allow Comments' },
-  { value: 'duet', label: 'Allow Duet' },
-  { value: 'stitch', label: 'Allow Stitch' },
-];
 
-const commercialContentOptions = [ 
+// main function 
+export default function TikTokPostUpload() {
+// Get user data from Redux store
+  const user = useSelector((state) => state.auth.user);
+  const tokens = useSelector((state) => state.auth.tokens);
+  const [userAccounts,setuserAccounts]=useState();
+  const [tiktokAccounts,settiktokAccounts]=useState();
+  const [currentAccounts,setcurrentAccounts]=useState();
+  const [accountName,setAccountName]=useState('');
+  const [profilePhoto,setProfilePhoto]=useState('');
+ 
+
+  const [open, setOpen] = useState(true);
+  const [title, setTitle] = useState('');
+  const [privacy, setPrivacy] = useState('SELF_ONLY');
+  const [interactions, setInteractions] = useState([]);
+  const [commercialContent, setCommercialContent] = useState([]);
+  const [videoFile, setVideoFile] = useState(null);
+  const [videoPreview, setVideoPreview] = useState('');
+  const [postType, setPostType] = useState('video'); // 'video' or 'photo'
+  const [canPost, setCanPost] = useState(true);
+  const [disclosureEnabled, setDisclosureEnabled] = useState(false);
+  const [complianceMessage, setComplianceMessage] = useState('');
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
+  const [loaderVisiblity, setloaderVisiblity]=useState(false);
+  const [checkPostAccountAvailibility,setcheckPostAccountAvailibility]=useState({});
+
+  const [privacyOptions,setpricacyOptions]=useState([  
+    { value: 'SELF_ONLY', label: 'Private (only me)' },
+    { value: 'FRIENDS', label: 'Friends' },
+    { value: 'PUBLIC', label: 'Public' },
+  ])
+
+  // in seconds, adjust as needed 
+  const [maxVideoDuration, setmaxVideoDuration]=useState(90)
+
+const [interactionOptions,setinteractionOptions] = useState([  
+  { value: 'comment', label: 'Allow Comments','status':false },
+  { value: 'duet', label: 'Allow Duet','status':false}, 
+  { value: 'stitch', label: 'Allow Stitch','status':false },
+]);
+
+
+
+const [commercialContentOptions,setcommercialContentOptions] = useState([ 
   { value: 'your_brand', label: 'Your Brand' },
   { value: 'branded_content', label: 'Branded Content' },
-];
+]);
 
-const maxVideoDuration = 90; // in seconds, adjust as needed 
-const SlimDialog = styled(Dialog)(({ theme }) => ({
-  '& .MuiDialogTitle-root': {
-    backgroundColor: theme.palette.background.paper,
-    borderBottom: `1px solid ${theme.palette.divider}`,
-    padding: theme.spacing(2),
-  },
-  '& .MuiDialogContent-root': {
-    padding: theme.spacing(2),
-    backgroundColor: theme.palette.background.default,
-  },
-  '& .MuiDialogActions-root': {
-    padding: theme.spacing(1),
-    backgroundColor: theme.palette.background.paper,
-    borderTop: `1px solid ${theme.palette.divider}`,
-  },
-  '& .MuiPaper-root': {
-    borderRadius: theme.shape.borderRadius,
-    boxShadow: theme.shadows[5],
-  },
-}));
+ 
 
-const SlimTextField = styled(TextField)(({ theme }) => ({
-  '& .MuiInputBase-root': {
-    borderRadius: theme.shape.borderRadius,
-    backgroundColor: theme.palette.background.paper,
-  },
-}));
+//...................states declarations above..............................
 
 const CustomFileInput = styled('label')(({ theme }) => ({
   display: 'block',
@@ -94,31 +104,6 @@ const RequiredAsterisk = styled('span')(({ theme }) => ({
   marginLeft: theme.spacing(0.5),
 }));
 
-export default function TikTokPostUpload() {
-// Get user data from Redux store
-  const user = useSelector((state) => state.auth.user);
-  const [userAccounts,setuserAccounts]=useState();
-  const [tiktokAccounts,settiktokAccounts]=useState();
-  const [currentAccounts,setcurrentAccounts]=useState();
-  const [accountName,setAccountName]=useState('');
-  const [profilePhoto,setProfilePhoto]=useState('');
- 
-
-  const [open, setOpen] = useState(true);
-  const [title, setTitle] = useState('');
-  const [privacy, setPrivacy] = useState('SELF_ONLY');
-  const [interactions, setInteractions] = useState([]);
-  const [commercialContent, setCommercialContent] = useState([]);
-  const [videoFile, setVideoFile] = useState(null);
-  const [videoPreview, setVideoPreview] = useState('');
-  const [postType, setPostType] = useState('video'); // 'video' or 'photo'
-  const [canPost, setCanPost] = useState(true);
-  const [disclosureEnabled, setDisclosureEnabled] = useState(false);
-  const [complianceMessage, setComplianceMessage] = useState('');
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
-const [loaderVisiblity, setloaderVisiblity]=useState(false);
-
 
   const handleFileChange = (event) => {
     const file = event.target.files[0];
@@ -133,7 +118,7 @@ const [loaderVisiblity, setloaderVisiblity]=useState(false);
                 window.URL.revokeObjectURL(video.src);
                 const { duration } = video; // Destructure duration from video object
                 if (duration > maxVideoDuration) {
-                    alert(`Video exceeds maximum allowed duration of ${maxVideoDuration} seconds.`);
+                    alert(`Video exceeds maximum allowed duration of ${maxVideoDuration/60} min.`);
                 } else {
                     setVideoFile(file);
                     setVideoPreview(URL.createObjectURL(file));
@@ -141,7 +126,8 @@ const [loaderVisiblity, setloaderVisiblity]=useState(false);
                 }
             };
             video.src = URL.createObjectURL(file);
-        } else {
+        } 
+        else {
             // For photos, simply set the file and its preview
             setVideoFile(file);
             setVideoPreview(URL.createObjectURL(file));
@@ -149,6 +135,72 @@ const [loaderVisiblity, setloaderVisiblity]=useState(false);
         }
     }
 };
+
+
+
+
+
+//checking pre posting avalibitlty of the user tiktok account
+const checkPostingCapability = async () => {
+  const uri = `${import.meta.env.VITE_BASE_BACKEND_URL}checkAvailability`;
+
+  // Default values for parameters
+  const userId = user?._id || null; // Use null if user._id is not available
+  const accessToken = tokens?.accessToken || ''; // Use an empty string if tokens.accessToken is not available
+
+  try {
+      // Make the API call
+      const response = await apiCall('POST', uri, {
+          headers: { 'Content-Type': 'application/json' },
+         
+            userId:userId,
+              accessToken:accessToken,
+
+      });
+      // Check if the response status is OK
+      var responseData=await response;
+      if (!responseData.status) {
+          // Handle non-200 responses (e.g., 400, 404, 500)
+          const errorData = responseData;
+          setcheckPostAccountAvailibility({});
+          throw new Error(`API Error: ${errorData.message || 'Something went wrong'}`);
+      }
+      // Process the successful response
+      console.log('API response:', responseData?.data?.data);
+      setcheckPostAccountAvailibility(responseData?.data?.data);
+      console.log("posting availability",checkPostAccountAvailibility.comment_disabled)
+      if(responseData?.data?.data){
+
+        setmaxVideoDuration(responseData?.data?.data.max_video_post_duration_sec);
+        const accountPrivacy=[];
+        responseData?.data?.data.privacy_level_options.map((option)=>{
+             const formatedOption={
+              label:option,
+              value:option
+             } 
+             accountPrivacy.push(formatedOption);
+            })
+            setpricacyOptions(accountPrivacy);
+      }
+      else{
+        console.log('responseavailibitynot found')
+      }
+      
+      console.log('checkPostAva',checkPostAccountAvailibility)
+
+    
+  } 
+  catch (error) {
+      // Handle errors (network issues, API errors, etc.)
+      // console.error('Error during API call:', error);
+      setcheckPostAccountAvailibility({});
+      
+  }
+};
+
+
+//handle submit llogic 
+
   const handleSubmit = async () => {
      setloaderVisiblity(true); //setting loader true
  
@@ -198,11 +250,11 @@ const [loaderVisiblity, setloaderVisiblity]=useState(false);
     }
   };
 
-  const checkPostingCapability = async () => {
-    // Mock API call to check if the user can post
-    const response = await apiCall('GET', 'your-api-endpoint/tiktok/check-capability');
-    setCanPost(response.canPost);
+  const handleScedule=async()=>{
+
   };
+
+
 
   const getUserAccountDetail=async()=>{
     // Mock API call to get user account details
@@ -364,13 +416,20 @@ const [loaderVisiblity, setloaderVisiblity]=useState(false);
               <Typography sx={{ fontSize: 13, marginBottom: 2, marginLeft: 2 }}>
                 Privacy <RequiredAsterisk>*</RequiredAsterisk>
               </Typography>
-              <Select value={privacy} onChange={handlePrivacyChange} fullWidth>
-                {privacyOptions.map((option) => (
-                  <MenuItem key={option.value} value={option.value}>
-                    {option.label}
-                  </MenuItem>
-                ))}
-              </Select>
+              <Select
+            value={privacy}
+            onChange={handlePrivacyChange}
+            fullWidth
+            renderValue={(selectedValue) => (
+              <span style={{ fontSize: '10px' }}>{selectedValue}</span>
+            )}
+          >  
+            {privacyOptions.map((option) => (
+              <MenuItem key={option.value} value={option.value} sx={{ fontSize: '10px' }}>
+                {option.label}
+              </MenuItem>
+            ))}
+          </Select>
             </FormControl>
   
             <FormControl fullWidth margin="normal">
@@ -428,29 +487,34 @@ const [loaderVisiblity, setloaderVisiblity]=useState(false);
               <InputLabel sx={{ fontSize: 13, marginBottom: 2, marginLeft: 2 }}>
                 Interactions <RequiredAsterisk>*</RequiredAsterisk>
               </InputLabel>
+
               <FormControl fullWidth margin="normal">
-                <Stack direction="row" spacing={2}>
-                  {interactionOptions.map((option) => (
-                    <FormControlLabel
-                      key={option.value}
-                      control={
-                        <Checkbox
-                          checked={interactions.includes(option.value)}
-                          onChange={(e) => {
-                            if (e.target.checked) {
-                              setInteractions([...interactions, option.value]);
-                            } else {
-                              setInteractions(interactions.filter((value) => value !== option.value));
-                            }
-                          }}
-                          disabled={postType === 'photo' && option.value !== 'comment'}
-                        />
-                      }
-                      label={option.label}
-                    />
-                  ))}
-                </Stack>
-              </FormControl>
+              <Stack direction="row" spacing={2}>
+                {interactionOptions.map((option) => (
+                  <FormControlLabel
+                    key={option.value}
+                    control={
+                      <Checkbox
+                        checked={interactions.includes(option.value)}
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            setInteractions([...interactions, option.value]);
+                          } else {
+                            setInteractions(interactions.filter((value) => value !== option.value));
+                          }
+                        }}
+                        disabled={
+                          (postType === 'photo' && option.value !== 'comment') ||
+                          (postType === 'video' && option.status === true)
+                        }
+                      />
+                    }
+                    label={option.label}
+                  />
+                ))}
+              </Stack>
+</FormControl>
+
             </Box>
   
             {videoPreview && (
@@ -483,6 +547,7 @@ const [loaderVisiblity, setloaderVisiblity]=useState(false);
               <Box sx={{ marginTop: 5, textAlign: 'center' }}>
                 <Iconify sx={{ boxShadow: '2px 2px 5px 5px #b2b2b2', borderRadius: 5, border: '3px solid #fe2c55' }} icon="eva:upload-fill" color="rgb(24,119,242)" size="48px" height="40px" width="40px" />
                 <Typography sx={{ fontSize: 13, my: 1 }}>{videoFile ? 'Change' : 'Upload'}</Typography>
+                <Typography sx={{ fontSize: 13, my: 1 }}>Max Media Duration {maxVideoDuration/60} min</Typography>
               </Box>
             </CustomFileInput>
   
@@ -528,9 +593,24 @@ const [loaderVisiblity, setloaderVisiblity]=useState(false);
                     >
                       Publish
                     </Button>
+                    <Button
+                      sx={{
+                        boxShadow: '2px 2px 2px 2px #b2b2b2',
+                        border: '1px solid',
+                        marginBottom: '15px',
+                        color: 'white',
+                        bgcolor: "#fe2c55",
+                        borderRadius: 0,   
+                      }}
+                      variant="contained"
+                      disabled
+                    >
+                      Scedule for future
+                    </Button>
                   </span>
                 </Tooltip>
               ) : (
+                <>
                 <Button
                   onClick={handleSubmit}
                   sx={{
@@ -547,6 +627,23 @@ const [loaderVisiblity, setloaderVisiblity]=useState(false);
                 >
                   Publish
                 </Button>
+                <Button
+                  onClick={handleScedule}
+                  sx={{
+                    boxShadow: '2px 2px 2px 2px #b2b2b2',
+                    border: '1px solid',
+                    marginBottom: '15px',
+                    color: 'white',
+                    bgcolor: "#fe2c55",
+                    borderRadius: 0,
+                  }}
+                  type="button"
+                  variant="contained"
+                  disabled={disclosureEnabled && commercialContent.length === 0}
+                >
+                  Schedule
+                </Button>
+                </>
               )}
             </Box>
           </Stack>
@@ -556,9 +653,5 @@ const [loaderVisiblity, setloaderVisiblity]=useState(false);
   );
 }
 
-// TikTokPostUpload.propTypes = {
-//   user: PropTypes.shape({
-//     nickname: PropTypes.string.isRequired,
-//     profilePic: PropTypes.string.isRequired,
-//   }).isRequired,
-// };
+
+
