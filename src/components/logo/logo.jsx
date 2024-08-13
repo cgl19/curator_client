@@ -23,7 +23,7 @@ const Logo = forwardRef(({ disabledLink = false, sx, ...other }, ref) => {
       {...other}
     >
       <img
-        src="/assets/logo/logok2.png" // Update with your image path
+        src="/assets/logo/Image20240813194607.png" // Update with your image path
         alt="Logo"
         style={{ width: '100%', height: '100%', objectFit: 'contain' }}
       />

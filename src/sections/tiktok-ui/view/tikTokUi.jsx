@@ -11,6 +11,8 @@ import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import InputLabel from '@mui/material/InputLabel';
 import FormControl from '@mui/material/FormControl';
+import Draggable from 'react-draggable';
+import Paper from '@mui/material/Paper';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
@@ -22,7 +24,8 @@ import Iconify from 'src/components/iconify';
 import { Tooltip } from '@mui/material';
 import { useSelector, useDispatch } from 'react-redux';
 import { ColorRing } from 'react-loader-spinner';
-
+import toast from 'react-hot-toast';
+import { Interaction } from '@fullcalendar/core/internal';
 
 
 
@@ -54,8 +57,10 @@ export default function TikTokPostUpload() {
   const handleClose = () => setOpen(false);
   const [loaderVisiblity, setloaderVisiblity]=useState(false);
   const [checkPostAccountAvailibility,setcheckPostAccountAvailibility]=useState({});
+  const [openScheduleDialogue,setopenScheduleDialogue]=useState(false);
+ 
 
-  const [privacyOptions,setpricacyOptions]=useState([  
+  const [privacyOptions,setprivacyOptions]=useState([  
     { value: 'SELF_ONLY', label: 'Private (only me)' },
     { value: 'FRIENDS', label: 'Friends' },
     { value: 'PUBLIC', label: 'Public' },
@@ -64,7 +69,7 @@ export default function TikTokPostUpload() {
   // in seconds, adjust as needed 
   const [maxVideoDuration, setmaxVideoDuration]=useState(90)
 
-const [interactionOptions,setinteractionOptions] = useState([  
+const [interactionOptions,setInteractionOptions] = useState([  
   { value: 'comment', label: 'Allow Comments','status':false },
   { value: 'duet', label: 'Allow Duet','status':false}, 
   { value: 'stitch', label: 'Allow Stitch','status':false },
@@ -80,7 +85,6 @@ const [commercialContentOptions,setcommercialContentOptions] = useState([
  
 
 //...................states declarations above..............................
-
 const CustomFileInput = styled('label')(({ theme }) => ({
   display: 'block',
   width: '100%',
@@ -104,6 +108,14 @@ const RequiredAsterisk = styled('span')(({ theme }) => ({
   marginLeft: theme.spacing(0.5),
 }));
 
+
+const PaperComponent = (props) => {
+  return (
+    <Draggable handle="#draggable-dialog-title" cancel={'[class*="MuiDialogContent-root"]'}>
+      <Paper {...props} />
+    </Draggable>
+  );
+};
 
   const handleFileChange = (event) => {
     const file = event.target.files[0];
@@ -172,6 +184,13 @@ const checkPostingCapability = async () => {
       if(responseData?.data?.data){
 
         setmaxVideoDuration(responseData?.data?.data.max_video_post_duration_sec);
+
+        setInteractionOptions([
+          { value: 'comment', label: 'Allow Comments', status: responseData?.data?.data.comment_disabled },
+          { value: 'duet', label: 'Allow Duet', status: responseData?.data?.data.duet_disabled },
+          { value: 'stitch', label: 'Allow Stitch', status:responseData?.data?.data.stitch_disabled },
+        ]);
+       
         const accountPrivacy=[];
         responseData?.data?.data.privacy_level_options.map((option)=>{
              const formatedOption={
@@ -180,79 +199,111 @@ const checkPostingCapability = async () => {
              } 
              accountPrivacy.push(formatedOption);
             })
-            setpricacyOptions(accountPrivacy);
+            setprivacyOptions(accountPrivacy);
       }
       else{
         console.log('responseavailibitynot found')
       }
       
-      console.log('checkPostAva',checkPostAccountAvailibility)
-
-    
+     
   } 
   catch (error) {
-      // Handle errors (network issues, API errors, etc.)
-      // console.error('Error during API call:', error);
       setcheckPostAccountAvailibility({});
-      
   }
 };
 
 
 //handle submit llogic 
 
-  const handleSubmit = async () => {
-     setloaderVisiblity(true); //setting loader true
+const handleSubmit = async () => {
+   // Set loader to true
+
+   if(!title){
+    toast("Please enter title 📝")
+   }
+   if (!videoFile) {
+    toast('Please select a media 📹');
+    return;
+  }
+  
+  if (privacy === 'SELF_ONLY' && commercialContent.includes('branded_content')) {
+    toast('Branded Content cannot be private 🔒');
+    return;
+  }
+  
+  if (disclosureEnabled && commercialContent.length === 0) {
+    toast('You need to indicate if your content promotes yourself, a third party, or both 🤔');
+    return;
+  }
+
+  
+
+  if (postType === 'photo' && interactions.length === 0) {
+    toast('For photo posts, only "Allow Comments" can be selected 📸');
+    return;
+  }
+  
+  if (postType === 'video' && commercialContent.length === 0) {
+    toast('Please select at least one commercial content option 📺');
+    return;
+  }
+  if (postType === 'video' && interactions.length === 0) {
+    toast('Please select at least one interaction ❓'); 
+    return;
+  }
+  
  
-    if (!videoFile) {
-      alert('Please select a file.');
-      return;
-    }
 
-    if (postType === 'photo' && interactions.length === 0) {
-      alert('For photo posts, only "Allow Comments" can be selected.');
-      return;
-    }
+  // Perform the upload and TikTok post creation here
+  try {
+  
+    
+    
+    
+    var uploadingToastId = toast.loading("Uploading to platform...",{
+      position: 'top-center',
+    });
+   
+    const accountId=userAccounts[0].accountId;
+    const formData = new FormData();
+    formData.append('user_id', user._id); 
+    formData.append('file', videoFile);
+    formData.append('title', title);
+    formData.append('privacy', privacy);
+    formData.append('interactions', interactions);
+    formData.append('commercialContent', commercialContent);
+    formData.append('accountId',accountId);
+    const uri = `${import.meta.env.VITE_BASE_BACKEND_URL}tiktokMedia`;
+    const response = await apiCall('POST', uri, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
 
-    if (postType === 'video' && commercialContent.length === 0) {
-      alert('Please select at least one commercial content option.');
-      return;
-    }
+    // Handling response
+    if (response.status === "success") {
+      toast.dismiss(uploadingToastId);
+      toast.success("Uploaded Successfully ✔️");
+      // Clear the form fields
+      setVideoFile(null);
+      setVideoPreview('')
+      setTitle('');
+      setPrivacy('');
+      setInteractions([]);
+      setCommercialContent([]);
+      setDisclosureEnabled(false);
 
-    if (privacy === 'SELF_ONLY' && commercialContent.includes('branded_content')) {
-      alert('Branded Content cannot be private.');
-      return;
-    }
+    } else {
+      toast.dismiss(uploadingToastId);
+      toast.error("Something went wrong, try again! ❌");    }
+    
+  } catch (error) {
+    toast.dismiss(uploadingToastId);
+    toast.error("Something went wrong, try again! ❌");    
+  } 
+};
 
-    if (disclosureEnabled && commercialContent.length === 0) {
-      alert('You need to indicate if your content promotes yourself, a third party, or both.');
-      return;
-    }
 
-    // Perform the upload and TikTok post creation here
-    try {
-      const formData = new FormData();
-      formData.append('user_id',user._id); 
-      formData.append('file', videoFile);
-      formData.append('title', title);
-      formData.append('privacy', privacy);
-      formData.append('interactions', interactions);
-      formData.append('commercialContent', commercialContent);
-      const uri=`${import.meta.env.VITE_BASE_BACKEND_URL}tiktokMedia`;
-      const response = await apiCall('POST',uri, formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-      });
-      console.log('Upload successful:', response);
-      
-     // handleClose();
-    } catch (error) {
-      console.error('Upload error:', error);
-    }
-  };
 
-  const handleScedule=async()=>{
 
-  };
 
 
 
@@ -349,20 +400,91 @@ const checkPostingCapability = async () => {
     );
   }
 
+
+    //handling scheduling post here
+
+    const handleScheduleSubmit=async()=>{
+       handleCloseScheduleDialog()
+       handleSubmit();
+    };
+
+    const handleCloseScheduleDialog=()=>{
+      setopenScheduleDialogue(false);
+    }
+
+
+    const handleOpenScheduleDialog=()=>{
+      setopenScheduleDialogue(true);
+    }
+    
+   
+
   // Get user data from Redux store
   return (
+    <>
+    {/* Dialog to handle the schedule Dialog */}
+   
+    <Dialog
+      PaperComponent={PaperComponent}
+      open={openScheduleDialogue}
+      onClose={handleCloseScheduleDialog}
+      maxWidth="sm"
+      fullWidth
+    >
+      <DialogTitle
+        sx={{
+          textAlign: 'center',
+          fontSize: '1.25rem',
+          fontWeight: 'bold',
+        }}
+      >
+        Schedule for future
+      </DialogTitle>
+      <DialogContent
+        sx={{
+          padding: 2,
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 2,
+        }}
+      >
+        {/* Content goes here */}
+      </DialogContent>
+      <DialogActions
+        sx={{
+          justifyContent: 'center',
+          padding: '16px 0',
+        }}
+      >
+
+        <Button
+          onClick={handleCloseScheduleDialog}
+          color="primary"
+          sx={{ fontSize: '0.875rem' }}
+        >
+          Close
+        </Button>
+        <Button
+          onClick={handleScheduleSubmit}
+          color="primary"
+          variant="contained"
+          sx={{ fontSize: '0.875rem' }}
+        >
+          Submit
+        </Button>
+      </DialogActions>
+    </Dialog>
+    {/* Dialog to handle the schedule Dialog */}
+    <Typography variant="h4">Post to TikTok</Typography>
     <Box
       sx={{
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
         minHeight: '100vh',
-        background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgb(255,154,104) 100%)',
-        p: 2,
+       
       }}
     >
-
- 
       <Box
         sx={{
           width: '100%',
@@ -378,9 +500,20 @@ const checkPostingCapability = async () => {
         }}
       >
         <form>
-          <Typography sx={{ color: '#1877f2' }} variant="h6" textAlign="center" gutterBottom>
-            Post to TikTok
-          </Typography>
+              {/* <Typography
+              sx={{ 
+                color: '#25F4EE',       // TikTok teal color
+                fontSize: '1.25rem',     // Large font size
+                fontWeight: 'bold'       // Make the text bold
+              }} 
+              variant="h4" 
+              textAlign="center" 
+              gutterBottom
+            >
+              Post to TikTok
+            </Typography> */}
+
+
           <Stack spacing={2}>
             <Stack direction="row" alignItems="center" spacing={2}>
               {profilePhoto && (
@@ -399,20 +532,25 @@ const checkPostingCapability = async () => {
               {accountName && <Typography variant="subtitle1">{accountName}</Typography>}
             </Stack>
   
-            <Box sx={{ borderRadius: '5px', boxShadow: '2px 2px 2px 2px #b2b2b2' }}>
+            <Box sx={{ borderRadius: '5px', boxShadow: ' 2px 2px #b2b2b2' }}>
               <Typography sx={{ fontSize: 13, marginLeft: 2 }}>
                 Post Title <RequiredAsterisk>*</RequiredAsterisk>
               </Typography>
               <TextField
-                placeholder="Enter title and tags"
+                placeholder="Enter post title"
                 fullWidth
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 margin="normal"
+                inputProps={{
+                  style: {
+                    fontSize: 15, // adjust the font size to your liking
+                  },
+                }}
               />
             </Box>
   
-            <FormControl fullWidth margin="normal" sx={{ boxShadow: '2px 2px 2px 2px #b2b2b2', borderRadius: '5px' }}>
+            <FormControl fullWidth margin="normal" sx={{ boxShadow: ' 2px 2px #b2b2b2', borderRadius: '5px' }}>
               <Typography sx={{ fontSize: 13, marginBottom: 2, marginLeft: 2 }}>
                 Privacy <RequiredAsterisk>*</RequiredAsterisk>
               </Typography>
@@ -433,7 +571,7 @@ const checkPostingCapability = async () => {
             </FormControl>
   
             <FormControl fullWidth margin="normal">
-              <Box sx={{ my: 1, boxShadow: '2px 2px 2px 2px #b2b2b2', borderRadius: '5px' }}>
+              <Box sx={{ my: 1, boxShadow: ' 2px 2px #b2b2b2', borderRadius: '5px' }}>
                 <Switch
                   checked={disclosureEnabled}
                   onChange={handleDisclosureToggle}
@@ -443,7 +581,7 @@ const checkPostingCapability = async () => {
                 </Typography>
               </Box>
   
-              <Box sx={{ my: 1, boxShadow: '2px 2px 2px 2px #b2b2b2', borderRadius: '5px' }}>
+              <Box sx={{ my: 1, boxShadow: ' 2px 2px #b2b2b2', borderRadius: '5px' }}>
                 {commercialContentOptions.map((option) => (
                   <FormControlLabel
                     key={option.value}
@@ -483,7 +621,7 @@ const checkPostingCapability = async () => {
               )}
             </FormControl>
   
-            <Box sx={{ boxShadow: '2px 2px 2px 2px #b2b2b2', borderRadius: '5px' }}>
+            <Box sx={{ boxShadow: ' 2px 2px #b2b2b2', borderRadius: '5px' }}>
               <InputLabel sx={{ fontSize: 13, marginBottom: 2, marginLeft: 2 }}>
                 Interactions <RequiredAsterisk>*</RequiredAsterisk>
               </InputLabel>
@@ -495,6 +633,7 @@ const checkPostingCapability = async () => {
                     key={option.value}
                     control={
                       <Checkbox
+                       
                         checked={interactions.includes(option.value)}
                         onChange={(e) => {
                           if (e.target.checked) {
@@ -509,7 +648,9 @@ const checkPostingCapability = async () => {
                         }
                       />
                     }
-                    label={option.label}
+                    label={
+                      <span style={{ fontSize: '13px' }}>{option.label}</span>
+                    }
                   />
                 ))}
               </Stack>
@@ -518,7 +659,7 @@ const checkPostingCapability = async () => {
             </Box>
   
             {videoPreview && (
-              <Box sx={{ width: '100%', mt: 2, maxHeight: 600, border: '1px solid', borderColor: 'divider', boxShadow: '2px 2px 2px 2px #b2b2b2', borderRadius: '5px' }}>
+              <Box sx={{ width: '100%', mt: 2, maxHeight: 600, border: '1px solid', borderColor: 'divider', boxShadow: ' 2px 2px #b2b2b2', borderRadius: '5px' }}>
                 {postType === 'video' ? (
                   <video
                     src={videoPreview}
@@ -620,6 +761,7 @@ const checkPostingCapability = async () => {
                     color: 'white',
                     bgcolor: "#fe2c55",
                     borderRadius: 0,
+                    mx:2
                   }}
                   type="button"
                   variant="contained"
@@ -628,7 +770,7 @@ const checkPostingCapability = async () => {
                   Publish
                 </Button>
                 <Button
-                  onClick={handleScedule}
+                  onClick={handleOpenScheduleDialog}
                   sx={{
                     boxShadow: '2px 2px 2px 2px #b2b2b2',
                     border: '1px solid',
@@ -650,6 +792,7 @@ const checkPostingCapability = async () => {
         </form>
       </Box>
     </Box>
+    </>
   );
 }
 

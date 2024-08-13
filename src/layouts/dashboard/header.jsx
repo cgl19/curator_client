@@ -51,7 +51,7 @@ export default function Header({ onOpenNav }) {
         boxShadow: 'none',
         height: HEADER.H_MOBILE,
         zIndex: theme.zIndex.appBar + 1,
-        background: 'linear-gradient(5deg, rgba(255, 255, 255, 0.8) 0%, rgb(255,154,104)100%)',
+        background: '#F0F4F8',
        
        
         transition: theme.transitions.create(['height'], {

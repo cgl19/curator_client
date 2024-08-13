@@ -19,6 +19,7 @@ import Scrollbar from 'src/components/scrollbar';
 import { useSelector } from 'react-redux';
 import { NAV } from './config-layout';
 import navConfig from './config-navigation';
+import { Divider } from '@mui/material';
 
 // ----------------------------------------------------------------------
 export default function Nav({ openNav, onCloseNav }) {
@@ -46,14 +47,13 @@ export default function Nav({ openNav, onCloseNav }) {
         display: 'flex',
         borderRadius: 1.5,
         alignItems: 'center',
-        background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgb(255,154,104)100%)',
+        background: 'rgb(241,88,43)',
         bgcolor: (theme) => alpha(theme.palette.grey[500], 0.12),
       }}
     >
       <Avatar src={account.photoURL} alt="photoURL" />
       <Box sx={{ ml: 2 }}>
-        <Typography variant="subtitle2">{account.fullName}</Typography>
-
+        <Typography variant="subtitle2" color='white'>{account.fullName}</Typography>
         <Typography variant="body2" sx={{ color: 'text.secondary' }}>
           {account.role}
         </Typography>
@@ -81,14 +81,12 @@ export default function Nav({ openNav, onCloseNav }) {
           display: 'flex',
           flexDirection: 'column',
           boxShadow: '15px 15px 15px 15px rgb(232,225,221)',
-          background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgb(255,154,104)100%)',
+          background: 'rgb(59,60,59)',
         },
       }}
     >
-      <Logo sx={{ mt: 3, ml: 4, mb:5 }} />
-
-      
-
+<Logo sx={{ mt: 3, ml: 4, mb:1, height:50, width:200, objectFit: 'contain' }} />
+<Divider sx={{ borderColor: 'white',mb:3 }} />
       {renderMenu}
 
       <Box sx={{ flexGrow: 1 }} />
@@ -149,11 +147,11 @@ function NavItem({ item }) {
         minHeight: 44,
         borderRadius: 0.75,
         typography: 'body2',
-        color: 'text.secondary',
+        color: 'rgb(255,255,255)',
         textTransform: 'capitalize',
         fontWeight: 'fontWeightMedium',
         ...(active && {
-          color: 'primary.main',
+          color: 'rgb(255,255,255)',
           fontWeight: 'fontWeightSemiBold',
           bgcolor: (theme) => alpha(theme.palette.primary.main, 0.08),
           '&:hover': {
