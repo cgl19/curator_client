@@ -25,11 +25,13 @@ import { Tooltip } from '@mui/material';
 import { useSelector, useDispatch } from 'react-redux';
 import { ColorRing } from 'react-loader-spinner';
 import toast from 'react-hot-toast';
-import { Interaction } from '@fullcalendar/core/internal';
-
-
-
-
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import dayjs from 'dayjs';
+import { DemoContainer, DemoItem } from '@mui/x-date-pickers/internals/demo';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
+import { renderTimeViewClock } from '@mui/x-date-pickers/timeViewRenderers';
 // main function 
 export default function TikTokPostUpload() {
 // Get user data from Redux store
@@ -58,7 +60,7 @@ export default function TikTokPostUpload() {
   const [loaderVisiblity, setloaderVisiblity]=useState(false);
   const [checkPostAccountAvailibility,setcheckPostAccountAvailibility]=useState({});
   const [openScheduleDialogue,setopenScheduleDialogue]=useState(false);
- 
+  const [scheduleDate, setScheduleDate] = useState(new Date());
 
   const [privacyOptions,setprivacyOptions]=useState([  
     { value: 'SELF_ONLY', label: 'Private (only me)' },
@@ -252,14 +254,8 @@ const handleSubmit = async () => {
     return;
   }
   
- 
-
   // Perform the upload and TikTok post creation here
   try {
-  
-    
-    
-    
     var uploadingToastId = toast.loading("Uploading to platform...",{
       position: 'top-center',
     });
@@ -300,11 +296,6 @@ const handleSubmit = async () => {
     toast.error("Something went wrong, try again! ❌");    
   } 
 };
-
-
-
-
-
 
 
   const getUserAccountDetail=async()=>{
@@ -416,14 +407,8 @@ const handleSubmit = async () => {
     const handleOpenScheduleDialog=()=>{
       setopenScheduleDialogue(true);
     }
-    
-   
-
-  // Get user data from Redux store
+    const MyDialog = ({ openScheduleDialogue, handleCloseScheduleDialog, handleScheduleSubmit }) => {
   return (
-    <>
-    {/* Dialog to handle the schedule Dialog */}
-   
     <Dialog
       PaperComponent={PaperComponent}
       open={openScheduleDialogue}
@@ -438,25 +423,12 @@ const handleSubmit = async () => {
           fontWeight: 'bold',
         }}
       >
-        Schedule for future
+        Schedule for Future
       </DialogTitle>
-      <DialogContent
-        sx={{
-          padding: 2,
-          display: 'flex',
-          flexDirection: 'column',
-          gap: 2,
-        }}
-      >
-        {/* Content goes here */}
+      <DialogContent>
+        <ResponsiveDateTimePickers />
       </DialogContent>
-      <DialogActions
-        sx={{
-          justifyContent: 'center',
-          padding: '16px 0',
-        }}
-      >
-
+      <DialogActions>
         <Button
           onClick={handleCloseScheduleDialog}
           color="primary"
@@ -474,6 +446,66 @@ const handleSubmit = async () => {
         </Button>
       </DialogActions>
     </Dialog>
+  );
+};
+
+const ResponsiveDateTimePickers = () => {
+  const [value, setValue] = useState(null);
+
+  return (
+    <LocalizationProvider dateAdapter={AdapterDayjs}>
+      <DateTimePicker
+        label="DateTimePicker"
+        value={value}
+        onChange={(newValue) => setValue(newValue)}
+        renderInput={(params) => <TextField {...params} />}
+      />
+    </LocalizationProvider>
+  );
+};
+  // Get user data from Redux store
+  return (
+    <>
+    {/* Dialog to handle the schedule posting  */}
+   
+    <Dialog
+      PaperComponent={PaperComponent}
+      open={openScheduleDialogue}
+      onClose={handleCloseScheduleDialog}
+      maxWidth="sm"
+      fullWidth
+    >
+      <DialogTitle
+        sx={{
+          textAlign: 'center',
+          fontSize: '1.25rem',
+          fontWeight: 'bold',
+        }}
+      >
+        Schedule for Future
+      </DialogTitle>
+      <DialogContent>
+      <ResponsiveDateTimePickers/>
+      </DialogContent>
+      <DialogActions>
+        <Button
+          onClick={handleCloseScheduleDialog}
+          color="primary"
+          sx={{ fontSize: '0.875rem' }}
+        >
+          Close
+        </Button>
+        <Button
+          onClick={handleScheduleSubmit}
+          color="primary"
+          variant="contained"
+          sx={{ fontSize: '0.875rem' }}
+        >
+          Submit
+        </Button>
+      </DialogActions>
+    </Dialog>
+
     {/* Dialog to handle the schedule Dialog */}
     <Typography variant="h4">Post to TikTok</Typography>
     <Box
