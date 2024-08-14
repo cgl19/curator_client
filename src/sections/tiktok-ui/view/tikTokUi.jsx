@@ -32,6 +32,8 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import { renderTimeViewClock } from '@mui/x-date-pickers/timeViewRenderers';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import BasicDatePicker from './dateTimePIcker';
 // main function 
 export default function TikTokPostUpload() {
 // Get user data from Redux store
@@ -60,7 +62,7 @@ export default function TikTokPostUpload() {
   const [loaderVisiblity, setloaderVisiblity]=useState(false);
   const [checkPostAccountAvailibility,setcheckPostAccountAvailibility]=useState({});
   const [openScheduleDialogue,setopenScheduleDialogue]=useState(false);
-  const [scheduleDate, setScheduleDate] = useState(new Date());
+  const [selectedDateTime, setSelectedDateTime] =useState(null);
 
   const [privacyOptions,setprivacyOptions]=useState([  
     { value: 'SELF_ONLY', label: 'Private (only me)' },
@@ -407,68 +409,59 @@ const handleSubmit = async () => {
     const handleOpenScheduleDialog=()=>{
       setopenScheduleDialogue(true);
     }
-    const MyDialog = ({ openScheduleDialogue, handleCloseScheduleDialog, handleScheduleSubmit }) => {
-  return (
-    <Dialog
-      PaperComponent={PaperComponent}
-      open={openScheduleDialogue}
-      onClose={handleCloseScheduleDialog}
-      maxWidth="sm"
-      fullWidth
-    >
-      <DialogTitle
-        sx={{
-          textAlign: 'center',
-          fontSize: '1.25rem',
-          fontWeight: 'bold',
-        }}
-      >
-        Schedule for Future
-      </DialogTitle>
-      <DialogContent>
-        <ResponsiveDateTimePickers />
-      </DialogContent>
-      <DialogActions>
-        <Button
-          onClick={handleCloseScheduleDialog}
-          color="primary"
-          sx={{ fontSize: '0.875rem' }}
-        >
-          Close
-        </Button>
-        <Button
-          onClick={handleScheduleSubmit}
-          color="primary"
-          variant="contained"
-          sx={{ fontSize: '0.875rem' }}
-        >
-          Submit
-        </Button>
-      </DialogActions>
-    </Dialog>
-  );
-};
 
-const ResponsiveDateTimePickers = () => {
-  const [value, setValue] = useState(null);
-
-  return (
-    <LocalizationProvider dateAdapter={AdapterDayjs}>
-      <DateTimePicker
-        label="DateTimePicker"
-        value={value}
-        onChange={(newValue) => setValue(newValue)}
-        renderInput={(params) => <TextField {...params} />}
-      />
-    </LocalizationProvider>
-  );
-};
+    const handleDateTimeChange = (newDateTime) => {
+      setSelectedDateTime(newDateTime);
+      console.log('DateTime selected in parent:', newDateTime); // Do something with the selected date-time
+    };
+   
   // Get user data from Redux store
   return (
     <>
     {/* Dialog to handle the schedule posting  */}
+
+    
+    <div>
+      <Dialog
+        open={openScheduleDialogue}
+        onClose={handleCloseScheduleDialog}
+        aria-labelledby="simple-dialog-title"
+        fullWidth
+        maxWidth="md" // You can use "sm", "md", "lg", "xl" or a custom size
+        PaperProps={{
+          style: {
+            width: '52%', // Custom width, adjust as needed
+            height: '65%', // Custom height, adjust as needed
+            maxHeight: '80vh', // Maximum height to ensure it doesn't exceed viewport height
+            margin: 'auto', // Center dialog horizontally
+          },
+        }}
+      >
+        <DialogTitle id="simple-dialog-title">Select Scheduling Date Time</DialogTitle>
+        <DialogContent>
+          <BasicDatePicker onDateTimeChange={handleDateTimeChange} />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseScheduleDialog} color="primary">
+            Close
+          </Button>
+          <Button
+            onClick={handleScheduleSubmit}
+            color="primary"
+            variant="contained"
+            sx={{ fontSize: '0.875rem' }}
+          >
+            Schedule
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </div>
+
+
+
+ 
    
-    <Dialog
+    {/* <Dialog
       PaperComponent={PaperComponent}
       open={openScheduleDialogue}
       onClose={handleCloseScheduleDialog}
@@ -485,7 +478,7 @@ const ResponsiveDateTimePickers = () => {
         Schedule for Future
       </DialogTitle>
       <DialogContent>
-      <ResponsiveDateTimePickers/>
+      <BasicDatePicker/>
       </DialogContent>
       <DialogActions>
         <Button
@@ -504,7 +497,7 @@ const ResponsiveDateTimePickers = () => {
           Submit
         </Button>
       </DialogActions>
-    </Dialog>
+    </Dialog> */}
 
     {/* Dialog to handle the schedule Dialog */}
     <Typography variant="h4">Post to TikTok</Typography>
