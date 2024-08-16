@@ -8,7 +8,7 @@ import Typography from '@mui/material/Typography';
 
 // ----------------------------------------------------------------------
 
-export default function AppWidgetSummary({ title, total, icon, status, color = 'primary', sx, ...other }) {
+export default function AppWidgetSummary({ title, accessTokenExpiry, total, icon, status, color = 'primary', sx, ...other }) {
   return (
     <Card
       component={Stack}
@@ -17,8 +17,8 @@ export default function AppWidgetSummary({ title, total, icon, status, color = '
       alignItems="center"
       justifyContent="center"
       sx={{
-        px: 3,
-        py: 5,
+      
+       
         borderRadius: 2,
         ...sx,
       }}
@@ -41,8 +41,7 @@ export default function AppWidgetSummary({ title, total, icon, status, color = '
         {icon && <Box sx={{ width: 64, height: 64 }}>{icon}</Box>}
         <Typography variant="h6" sx={{ textAlign: 'center' }}>{title}</Typography>
         <Typography variant="subtitle2" sx={{ color: 'text.disabled', textAlign: 'center' }}>
-          {(new Date()).toLocaleString().split(',')[0]}
-        </Typography>
+        {accessTokenExpiry?.toLocaleString().split(':')[0].split('-').slice(0, 3)} </Typography>
       </Stack>
     </Card>
   );

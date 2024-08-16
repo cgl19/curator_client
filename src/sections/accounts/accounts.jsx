@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Container, Stack, Typography, Grid, Box } from '@mui/material';
 import AppWidgetSummary from './components/app-widget-summary';
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -8,8 +8,10 @@ import 'swiper/swiper-bundle.min.css';
 import './style.css'; // Import custom styles for Swiper if needed
 import AppWidgetAdd from './components/app-widget-add';
 import FacebookPage from './connects/facebookPage/facebookPage';
-
+import { useSelector, useDispatch } from 'react-redux';
 SwiperCore.use([Pagination, Navigation, Autoplay]);
+import apiCall from '../../../src/utils/api';
+
 
 function returnAccountIconImage(account) {
   const iconMap = {
@@ -34,26 +36,62 @@ const gridItemStyle = {
 
 const UserPage = () => {
   const navigate = useNavigate();
+  const user = useSelector((state) => state.auth.user);
+  const [userAccounts, setuserAccounts] = useState([]);
+ 
 
+  
   const handleFacebookPageClick = () => {
     navigate('/connection/facebook/page');
   };
-const handleFacebookGroupClick=()=>{
-  navigate('/connection/facebook/group');
-}
+  const handleFacebookGroupClick = () => {
+    navigate('/connection/facebook/group');
+  };
 
-const handleInstagramClick=()=>{
-  navigate('/connection/instagram');
-}
-const handleLinkedinClick=()=>{
-  navigate('/connection/linkedin');
-}
-const handleTiktokClick=()=>{
-  navigate('/connection/tiktok');
-  }
-  const handleYoutubeClick=()=>{
+  const handleInstagramClick = () => {
+    navigate('/connection/instagram');
+  };
+  const handleLinkedinClick = () => {
+    navigate('/connection/linkedin');
+  };
+  const handleTiktokClick = () => {
+    navigate('/connection/tiktok');
+  };
+  const handleYoutubeClick = () => {
     navigate('/connection/youtube');
+  };
+
+  const getUserAccountDetail = async () => {
+    // Mock API call to get user account details
+    const uri = `${import.meta.env.VITE_BASE_BACKEND_URL}getUserAccounts`;
+    const response = await apiCall('POST', uri, {
+      id: user._id,
+    });
+
+    if (response.status) {
+      setuserAccounts(response.accounts); //array of objects
+      console.log(response.accounts);
+
+      return;
+    } else {
+      setuserAccounts([]);
+      return;
+    }
+  };
+
+  const handleSelectedAccount=(platform,account_id)=>{
+      
+      if(platform.toLowerCase().includes('tiktok')){
+        navigate(`/tiktok/postupload/${platform}/${account_id}`);
+      }
+      toast("Waiting for platform resource...");
+      return;
   }
+
+
+  useEffect(() => {
+    getUserAccountDetail();
+  }, []);
 
   return (
     <Container>
@@ -85,21 +123,7 @@ const handleTiktokClick=()=>{
           },
         }}
       >
-        {/* <SwiperSlide className="swiper-slide-custom">
-          <AppWidgetAdd
-            onClick={handleFacebookPageClick}
-            title="Facebook Page"
-            icon={returnAccountIconImage({ type: 'facebook' })}
-          />
-        </SwiperSlide>
         <SwiperSlide className="swiper-slide-custom">
-          <AppWidgetAdd
-            onClick={handleFacebookGroupClick}
-            title="Facebook Group"
-            icon={returnAccountIconImage({ type: 'facebook' })}
-          />
-        </SwiperSlide> */}
-          <SwiperSlide className="swiper-slide-custom">
           <AppWidgetAdd
             onClick={handleTiktokClick}
             title="Tiktok"
@@ -107,78 +131,66 @@ const handleTiktokClick=()=>{
           />
         </SwiperSlide>
         <SwiperSlide className="swiper-slide-custom">
-          <AppWidgetAdd
-            title="Twitter"
-            icon={returnAccountIconImage({ type: 'twitter' })}
-          />
+          <AppWidgetAdd title="Twitter" icon={returnAccountIconImage({ type: 'twitter' })} />
         </SwiperSlide>
         <SwiperSlide className="swiper-slide-custom">
           <AppWidgetAdd
-          onClick={handleLinkedinClick}
+            onClick={handleLinkedinClick}
             title="LinkedIn"
             icon={returnAccountIconImage({ type: 'linkedin' })}
           />
         </SwiperSlide>
         <SwiperSlide className="swiper-slide-custom">
           <AppWidgetAdd
-             onClick={handleInstagramClick}
+            onClick={handleInstagramClick}
             title="Instagram"
             icon={returnAccountIconImage({ type: 'instagram' })}
           />
         </SwiperSlide>
         <SwiperSlide className="swiper-slide-custom">
           <AppWidgetAdd
-           onClick={handleYoutubeClick}
+            onClick={handleYoutubeClick}
             title="Youtube"
             icon={returnAccountIconImage({ type: 'youtube' })}
           />
         </SwiperSlide>
-      
       </Swiper>
 
-      <Typography marginTop={5} variant="h6">Attached Accounts</Typography>
-    
-      <Grid container spacing={5} marginTop={3}>
-        {/* <Grid item xs={12} sm={6} md={3}>
-          <AppWidgetSummary
-            title={<Box component="span" sx={{ ml: 2 }}>Huzaifa</Box>}
-            icon={returnAccountIconImage({ type: 'facebook' })}
-            status={true}
-            style={gridItemStyle}
-            onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.02)'}
-            onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
-          />
-        </Grid> */}
-        <Grid item xs={12} sm={6} md={3}>
-          <AppWidgetSummary
-            title={<Box component="span" sx={{ ml: 2 }}>Usama</Box>}
-            icon={returnAccountIconImage({ type: 'linkedin' })}
-            status={false}
-            style={gridItemStyle}
-            onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.02)'}
-            onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
-          />
-        </Grid>
-        <Grid item xs={12} sm={6} md={3}>
-          <AppWidgetSummary
-            title={<Box component="span" sx={{ ml: 2 }}>Adnan</Box>}
-            icon={returnAccountIconImage({ type: 'youtube' })}
-            status={true}
-            style={gridItemStyle}
-            onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.02)'}
-            onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
-          />
-        </Grid>
-        <Grid item xs={12} sm={6} md={3}>
-          <AppWidgetSummary
-            title={<Box component="span" sx={{ ml: 2 }}>Hamza</Box>}
-            icon={returnAccountIconImage({ type: 'instagram' })}
-            status={false}
-            style={gridItemStyle}
-            onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.02)'}
-            onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
-          />
-        </Grid>
+      <Typography marginTop={5} variant="h6">
+        Attached Accounts
+      </Typography>
+
+      <Grid container marginTop={5}>
+        {userAccounts &&
+          userAccounts?.map((account) => (
+            <Grid
+              item
+              xs={12}
+              sm={6}
+              md={3}
+              sx={{ justifyContent: 'center', alignItems: 'center' }}
+              onClick={(e) => handleSelectedAccount(account.platform, account._id)}
+          >
+              <AppWidgetSummary
+                title={<Box component="span">{account?.name.toUpperCase()}</Box>}
+                icon={returnAccountIconImage({ type: account?.platform.toLowerCase() })}
+                status={true}
+                accessTokenExpiry={account?.accessTokenExpiry}
+                style={gridItemStyle}
+
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = 'scale(1.02)';
+                  e.currentTarget.style.cursor='pointer'
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = 'scale(1)';
+                   e.currentTarget.style.cursor='default'
+                }}
+
+                
+              />
+            </Grid>
+          ))}
       </Grid>
     </Container>
   );

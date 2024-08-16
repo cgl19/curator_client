@@ -25,20 +25,19 @@ import { Tooltip } from '@mui/material';
 import { useSelector, useDispatch } from 'react-redux';
 import { ColorRing } from 'react-loader-spinner';
 import toast from 'react-hot-toast';
-import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
-import dayjs from 'dayjs';
-import { DemoContainer, DemoItem } from '@mui/x-date-pickers/internals/demo';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
-import { renderTimeViewClock } from '@mui/x-date-pickers/timeViewRenderers';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import BasicDatePicker from './dateTimePIcker';
+import { useParams } from 'react-router-dom';
 // main function 
+
+
+
+
+
 export default function TikTokPostUpload() {
 // Get user data from Redux store
   const user = useSelector((state) => state.auth.user);
   const tokens = useSelector((state) => state.auth.tokens);
+  const params = useParams();
   const [userAccounts,setuserAccounts]=useState();
   const [tiktokAccounts,settiktokAccounts]=useState();
   const [currentAccounts,setcurrentAccounts]=useState();
@@ -63,7 +62,12 @@ export default function TikTokPostUpload() {
   const [checkPostAccountAvailibility,setcheckPostAccountAvailibility]=useState({});
   const [openScheduleDialogue,setopenScheduleDialogue]=useState(false);
   const [selectedDateTime, setSelectedDateTime] =useState(null);
+  const [isScheduled, setIsScheduled]=useState(false);
+  const [postingAccountId, setpostingAccountId] = useState('');
+  const [postingPlatformName, setpostingPlatformName] = useState('');
 
+
+  
   const [privacyOptions,setprivacyOptions]=useState([  
     { value: 'SELF_ONLY', label: 'Private (only me)' },
     { value: 'FRIENDS', label: 'Friends' },
@@ -157,7 +161,7 @@ const PaperComponent = (props) => {
 
 
 //checking pre posting avalibitlty of the user tiktok account
-const checkPostingCapability = async () => {
+const checkPostingCapability = async (platform,accountId) => {
   const uri = `${import.meta.env.VITE_BASE_BACKEND_URL}checkAvailability`;
 
   // Default values for parameters
@@ -170,8 +174,9 @@ const checkPostingCapability = async () => {
           headers: { 'Content-Type': 'application/json' },
          
             userId:userId,
-              accessToken:accessToken,
-
+            postingAccountId:accountId,
+            postingPlatformName:platform,
+            accessToken:accessToken,
       });
       // Check if the response status is OK
       var responseData=await response;
@@ -182,7 +187,7 @@ const checkPostingCapability = async () => {
           throw new Error(`API Error: ${errorData.message || 'Something went wrong'}`);
       }
       // Process the successful response
-      console.log('API response:', responseData?.data?.data);
+
       setcheckPostAccountAvailibility(responseData?.data?.data);
       console.log("posting availability",checkPostAccountAvailibility.comment_disabled)
       if(responseData?.data?.data){
@@ -271,6 +276,10 @@ const handleSubmit = async () => {
     formData.append('interactions', interactions);
     formData.append('commercialContent', commercialContent);
     formData.append('accountId',accountId);
+    formData.append('isScheduled',isScheduled);
+    if(isScheduled){
+      formData.append('scheduledDateTime',selectedDateTime);
+    }
     const uri = `${import.meta.env.VITE_BASE_BACKEND_URL}tiktokMedia`;
     const response = await apiCall('POST', uri, formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
@@ -279,15 +288,15 @@ const handleSubmit = async () => {
     // Handling response
     if (response.status === "success") {
       toast.dismiss(uploadingToastId);
-      toast.success("Uploaded Successfully ✔️");
+      if(isScheduled){
+        toast.success("Post has scheduled at "+selectedDateTime+"✔️");
+      }
+      else{
+
+        toast.success("Uploaded Successfully ✔️");
+      }
       // Clear the form fields
-      setVideoFile(null);
-      setVideoPreview('')
-      setTitle('');
-      setPrivacy('');
-      setInteractions([]);
-      setCommercialContent([]);
-      setDisclosureEnabled(false);
+      handleClearFormData();
 
     } else {
       toast.dismiss(uploadingToastId);
@@ -299,6 +308,18 @@ const handleSubmit = async () => {
   } 
 };
 
+
+
+const handleClearFormData=()=>{
+  setVideoFile(null);
+  setVideoPreview('')
+  setTitle('');
+  setPrivacy('');
+  setInteractions([]);
+  setCommercialContent([]);
+  setDisclosureEnabled(false);
+  toast.success("Data wiped successfully 🎉");
+}
 
   const getUserAccountDetail=async()=>{
     // Mock API call to get user account details
@@ -322,11 +343,23 @@ const handleSubmit = async () => {
   }
 
   useEffect(() => {
-   getUserAccountDetail();
-    checkPostingCapability();
+    getUserAccountDetail();
   }, []);
 
-  useEffect(() => {
+
+  //handling the route parameters
+  useEffect(()=>{
+    const platform = params.platform;
+    const accountId = params.account_id;
+   
+    setpostingAccountId(accountId);
+    setpostingPlatformName(platform);
+    checkPostingCapability(platform,accountId);
+    
+  },[]);  
+
+
+  useEffect(() => { 
     if (disclosureEnabled) {
       if (commercialContent.includes('your_brand') && commercialContent.includes('branded_content')) {
         setComplianceMessage(
@@ -397,7 +430,8 @@ const handleSubmit = async () => {
     //handling scheduling post here
 
     const handleScheduleSubmit=async()=>{
-       handleCloseScheduleDialog()
+       handleCloseScheduleDialog();
+       setIsScheduled(true);
        handleSubmit();
     };
 
@@ -420,7 +454,7 @@ const handleSubmit = async () => {
     <>
     {/* Dialog to handle the schedule posting  */}
 
-    
+
     <div>
       <Dialog
         open={openScheduleDialogue}
@@ -737,7 +771,7 @@ const handleSubmit = async () => {
                     bgcolor: '#1877f2',
                   },
                 }}
-                onClick={handleClose}
+                onClick={handleClearFormData}
               >
                 Cancel
               </Button>

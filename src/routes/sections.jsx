@@ -49,7 +49,7 @@ export default function Router() {
         { path: 'media', element: <PrivateRoute element={<MediaPage />} /> },
         { path: 'profile', element: <PrivateRoute element={<ProfilePage />} /> },
         {
-          path: 'tiktok/postupload',
+          path: 'tiktok/postupload/:platform/:account_id',
           element: <TikTokPostUploadPage />,
         },
       ],
