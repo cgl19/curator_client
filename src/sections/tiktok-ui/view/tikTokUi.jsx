@@ -22,11 +22,13 @@ import { FormControlLabel } from '@mui/material';
 import { Switch } from '@mui/material'; 
 import Iconify from 'src/components/iconify';
 import { Tooltip } from '@mui/material';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector} from 'react-redux';
 import { ColorRing } from 'react-loader-spinner';
 import toast from 'react-hot-toast';
 import BasicDatePicker from './dateTimePIcker';
 import { useParams } from 'react-router-dom';
+import PostLimitOverlay from '../PostLimitOverlay';
+import ErrorOverlay from '../ErrorOverlay';
 // main function 
 
 
@@ -38,9 +40,6 @@ export default function TikTokPostUpload() {
   const user = useSelector((state) => state.auth.user);
   const tokens = useSelector((state) => state.auth.tokens);
   const params = useParams();
-  const [userAccounts,setuserAccounts]=useState();
-  const [tiktokAccounts,settiktokAccounts]=useState();
-  const [currentAccounts,setcurrentAccounts]=useState();
   const [accountName,setAccountName]=useState('');
   const [profilePhoto,setProfilePhoto]=useState('');
  
@@ -63,10 +62,8 @@ export default function TikTokPostUpload() {
   const [openScheduleDialogue,setopenScheduleDialogue]=useState(false);
   const [selectedDateTime, setSelectedDateTime] =useState(null);
   const [isScheduled, setIsScheduled]=useState(false);
-  const [postingAccountId, setpostingAccountId] = useState('');
-  const [postingPlatformName, setpostingPlatformName] = useState('');
-
-
+  const [postAccountId, setPostAccountId] = useState(null) // or useState('')
+  const [isVisibilityCheck,setIsVisibilityCheck]=useState(false);
   
   const [privacyOptions,setprivacyOptions]=useState([  
     { value: 'SELF_ONLY', label: 'Private (only me)' },
@@ -117,43 +114,39 @@ const RequiredAsterisk = styled('span')(({ theme }) => ({
 }));
 
 
-const PaperComponent = (props) => {
-  return (
-    <Draggable handle="#draggable-dialog-title" cancel={'[class*="MuiDialogContent-root"]'}>
-      <Paper {...props} />
-    </Draggable>
-  );
-};
 
-  const handleFileChange = (event) => {
-    const file = event.target.files[0];
-    if (file) {
-        const fileType = file.type.split('/')[0];
-        setPostType(fileType === 'video' ? 'video' : 'photo');
 
-        if (fileType === 'video') {
-            const video = document.createElement('video');
-            video.preload = 'metadata';
-            video.onloadedmetadata = () => {
-                window.URL.revokeObjectURL(video.src);
-                const { duration } = video; // Destructure duration from video object
-                if (duration > maxVideoDuration) {
-                    alert(`Video exceeds maximum allowed duration of ${maxVideoDuration/60} min.`);
-                } else {
-                    setVideoFile(file);
-                    setVideoPreview(URL.createObjectURL(file));
-                    setInteractions([]); // Clear interactions for video
-                }
-            };
-            video.src = URL.createObjectURL(file);
-        } 
-        else {
-            // For photos, simply set the file and its preview
-            setVideoFile(file);
-            setVideoPreview(URL.createObjectURL(file));
-            setInteractions(['comment']); // Pre-select "Allow Comments" for photo
-        }
-    }
+const handleFileChange = (event) => {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  const fileType = file.type.split('/')[0];
+  const isVideo = fileType === 'video';
+  setPostType(isVideo ? 'video' : 'photo');
+
+  if (isVideo) {
+      const video = document.createElement('video');
+      video.preload = 'metadata';
+
+      video.onloadedmetadata = () => {
+          window.URL.revokeObjectURL(video.src);
+          const { duration } = video;
+
+          if (duration > maxVideoDuration) {
+              alert(`Video exceeds maximum allowed duration of ${maxVideoDuration / 60} min.`);
+          } else {
+              setVideoFile(file);
+              setVideoPreview(URL.createObjectURL(file));
+              setInteractions([]); // Clear interactions for video
+          }
+      };
+
+      video.src = URL.createObjectURL(file);
+  } else {
+      setVideoFile(file);
+      setVideoPreview(URL.createObjectURL(file));
+      setInteractions(['comment']); // Pre-select "Allow Comments" for photo
+  }
 };
 
 
@@ -161,7 +154,7 @@ const PaperComponent = (props) => {
 
 
 //checking pre posting avalibitlty of the user tiktok account
-const checkPostingCapability = async (platform,accountId) => {
+const checkPostingCapability = async (platform, accountId) => {
   const uri = `${import.meta.env.VITE_BASE_BACKEND_URL}checkAvailability`;
 
   // Default values for parameters
@@ -169,194 +162,173 @@ const checkPostingCapability = async (platform,accountId) => {
   const accessToken = tokens?.accessToken || ''; // Use an empty string if tokens.accessToken is not available
 
   try {
-      // Make the API call
-      const response = await apiCall('POST', uri, {
-          headers: { 'Content-Type': 'application/json' },
-         
-            userId:userId,
-            postingAccountId:accountId,
-            postingPlatformName:platform,
-            accessToken:accessToken,
-      });
-      // Check if the response status is OK
-      var responseData=await response;
-      if (!responseData.status) {
-          // Handle non-200 responses (e.g., 400, 404, 500)
-          const errorData = responseData;
-          setcheckPostAccountAvailibility({});
-          throw new Error(`API Error: ${errorData.message || 'Something went wrong'}`);
-      }
-      // Process the successful response
+    // Make the API call
+    const response = await apiCall('POST', uri, {
+      headers: { 'Content-Type': 'application/json' },
+      userId: userId,
+      postingAccountId: accountId,
+      postingPlatformName: platform,
+      accessToken: accessToken,
+    });
 
-      setcheckPostAccountAvailibility(responseData?.data?.data);
-      console.log("posting availability",checkPostAccountAvailibility.comment_disabled)
-      if(responseData?.data?.data){
-
-        setmaxVideoDuration(responseData?.data?.data.max_video_post_duration_sec);
-
-        setInteractionOptions([
-          { value: 'comment', label: 'Allow Comments', status: responseData?.data?.data.comment_disabled },
-          { value: 'duet', label: 'Allow Duet', status: responseData?.data?.data.duet_disabled },
-          { value: 'stitch', label: 'Allow Stitch', status:responseData?.data?.data.stitch_disabled },
-        ]);
-       
-        const accountPrivacy=[];
-        responseData?.data?.data.privacy_level_options.map((option)=>{
-             const formatedOption={
-              label:option,
-              value:option
-             } 
-             accountPrivacy.push(formatedOption);
-            })
-            setprivacyOptions(accountPrivacy);
-      }
-      else{
-        console.log('responseavailibitynot found')
-      }
-      
-     
-  } 
-  catch (error) {
+    // Check if the response status is OK
+    const responseData = await response;
+    console.log(responseData);
+    if (!responseData.status) {
+      // Handle non-200 responses (e.g., 400, 404, 500)
+      const errorData = responseData;
       setcheckPostAccountAvailibility({});
+      toast.error(`API Error: ${errorData.message || 'Something went wrong'} ❌`);
+      return;
+    }
+
+    // Process the successful response
+    const accountData = responseData?.data?.data;
+    if (accountData) {
+      setCanPost(responseData.postLimit);
+      setcheckPostAccountAvailibility(accountData);
+      setAccountName(accountData.creator_username);
+      setProfilePhoto(accountData.creator_avatar_url);
+      setmaxVideoDuration(accountData.max_video_post_duration_sec);
+      setInteractionOptions([
+        { value: 'comment', label: 'Allow Comments', status: accountData.comment_disabled },
+        { value: 'duet', label: 'Allow Duet', status: accountData.duet_disabled },
+        { value: 'stitch', label: 'Allow Stitch', status: accountData.stitch_disabled },
+      ]);
+
+      const accountPrivacy = accountData.privacy_level_options.map((option) => ({
+        label: option,
+        value: option,
+      }));
+      setprivacyOptions(accountPrivacy);
+    }
+     else {
+      setIsVisibilityCheck(true);
+      
+    }
+  } catch (error) {
+    setcheckPostAccountAvailibility({});
+    setIsVisibilityCheck(true);
+    // toast.error(`Error: ${error.message || 'An unexpected error occurred'} `);
   }
 };
+
+
 
 
 //handle submit llogic 
 
 const handleSubmit = async () => {
-   // Set loader to true
-
-   if(!title){
-    toast("Please enter title 📝")
-   }
-   if (!videoFile) {
-    toast('Please select a media 📹');
-    return;
-  }
-  
-  if (privacy === 'SELF_ONLY' && commercialContent.includes('branded_content')) {
-    toast('Branded Content cannot be private 🔒');
-    return;
-  }
-  
-  if (disclosureEnabled && commercialContent.length === 0) {
-    toast('You need to indicate if your content promotes yourself, a third party, or both 🤔');
-    return;
-  }
-
-  
-
-  if (postType === 'photo' && interactions.length === 0) {
-    toast('For photo posts, only "Allow Comments" can be selected 📸');
-    return;
-  }
-  
-  if (postType === 'video' && commercialContent.length === 0) {
-    toast('Please select at least one commercial content option 📺');
-    return;
-  }
-  if (postType === 'video' && interactions.length === 0) {
-    toast('Please select at least one interaction ❓'); 
-    return;
-  }
-  
-  // Perform the upload and TikTok post creation here
   try {
-    var uploadingToastId = toast.loading("Uploading to platform...",{
-      position: 'top-center',
-    });
-   
-    const accountId=userAccounts[0].accountId;
+    // Input validations
+    if (!title) {
+      toast("Please enter a title 📝");
+      return;
+    }
+
+    if (!videoFile) {
+      toast("Please select a media file 📹");
+      return;
+    }
+
+    if (privacy === 'SELF_ONLY' && commercialContent.includes('branded_content')) {
+      toast('Branded Content cannot be private 🔒');
+      return;
+    }
+
+    if (disclosureEnabled && commercialContent.length === 0) {
+      toast('You need to disclose if your content promotes yourself, a third party, or both 🤔');
+      return;
+    }
+
+    if (postType === 'photo' && interactions.includes('Allow Comments')) {
+      toast('For photo posts, only "Allow Comments" can be selected 📸');
+      return;
+    } 
+
+    if (postType === 'video') {
+      if (commercialContent.length === 0) {
+        toast('Please select at least one commercial content option 📺');
+        return;
+      }
+
+      if (interactions.length === 0) {
+        toast('Please select at least one interaction ❓'); 
+        return;
+      }
+    }
+
+    // Start upload process
+    var uploadingToastId = toast.loading("Uploading to platform...", { position: 'top-center' });
+
     const formData = new FormData();
-    formData.append('user_id', user._id); 
+    formData.append('user_id', user._id);
     formData.append('file', videoFile);
     formData.append('title', title);
     formData.append('privacy', privacy);
-    formData.append('interactions', interactions);
-    formData.append('commercialContent', commercialContent);
-    formData.append('accountId',accountId);
-    formData.append('isScheduled',isScheduled);
-    if(isScheduled){
-      formData.append('scheduledDateTime',selectedDateTime);
+    formData.append('interactions', JSON.stringify(interactions));
+    formData.append('commercialContent', JSON.stringify(commercialContent));
+    formData.append('accountId', params.account_id);
+    formData.append('isScheduled', isScheduled);
+
+    if (isScheduled) {
+      formData.append('scheduledDateTime', selectedDateTime);
     }
+
     const uri = `${import.meta.env.VITE_BASE_BACKEND_URL}tiktokMedia`;
     const response = await apiCall('POST', uri, formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
     });
 
-    // Handling response
+    toast.dismiss(uploadingToastId);
+
     if (response.status === "success") {
-      toast.dismiss(uploadingToastId);
-      if(isScheduled){
-        toast.success("Post has scheduled at "+selectedDateTime+"✔️");
-      }
-      else{
-
-        toast.success("Uploaded Successfully ✔️");
-      }
-      // Clear the form fields
+      const message = isScheduled 
+        ? `Post has been scheduled for ${selectedDateTime} ✔️`
+        : "Uploaded Successfully ✔️";
+      toast.success(message);
       handleClearFormData();
-
-    } else {
+      console.log(response);
+      setCanPost(response.postLimit);
+    } 
+    else {
       toast.dismiss(uploadingToastId);
-      toast.error("Something went wrong, try again! ❌");    }
-    
+      toast.error("Something went wrong, please try again! ❌");
+    }
+
   } catch (error) {
     toast.dismiss(uploadingToastId);
-    toast.error("Something went wrong, try again! ❌");    
-  } 
+    toast.error("Something went wrong, please try again! ❌");
+  }
 };
 
 
 
-const handleClearFormData=()=>{
+
+const handleClearFormData = () => {
   setVideoFile(null);
-  setVideoPreview('')
+  setVideoPreview('');
   setTitle('');
-  setPrivacy('');
+  setPrivacy(''); // Consider setting a default privacy value if needed
   setInteractions([]);
   setCommercialContent([]);
   setDisclosureEnabled(false);
-  toast.success("Data wiped successfully 🎉");
-}
+  
+  toast.success("Data cleared successfully 🎉");
+};
 
-  const getUserAccountDetail=async()=>{
-    // Mock API call to get user account details
-    const uri=`${import.meta.env.VITE_BASE_BACKEND_URL}getUserAccounts`;
-    const response = await apiCall('POST', uri,{
-      id:user._id
-    });
-    if(response.accounts){
-      console.log(response.accounts)
-      setuserAccounts(response.accounts); //array of objects
-      setAccountName(response.accounts[0]?.name)
-      setProfilePhoto(response.accounts[0]?.avatarUrl)
-      return;
-    }
-    else{
-      setuserAccounts([]);
-      setAccountName('')
-      setProfilePhoto('')
-      return;
-    }
-  }
 
-  useEffect(() => {
-    getUserAccountDetail();
-  }, []);
 
 
   //handling the route parameters
-  useEffect(()=>{
-    const platform = params.platform;
-    const accountId = params.account_id;
-   
-    setpostingAccountId(accountId);
-    setpostingPlatformName(platform);
-    checkPostingCapability(platform,accountId);
-    
-  },[]);  
+  useEffect(() => {
+    async function fetchParams() {
+      const platform = await params.platform;
+      const accountId = await params.account_id;
+      checkPostingCapability(platform, accountId);
+    }
+    fetchParams();
+  }, []);
 
 
   useEffect(() => { 
@@ -418,13 +390,9 @@ const handleClearFormData=()=>{
     }
   };
 
-  if (!canPost) {
-    return (
-      <Typography variant="body1" color="error" sx={{ p: 2 }}>
-        You have reached your posting limit for today. Please try again later.
-      </Typography>
-    );
-  }
+
+  
+ 
 
 
     //handling scheduling post here
@@ -446,9 +414,23 @@ const handleClearFormData=()=>{
 
     const handleDateTimeChange = (newDateTime) => {
       setSelectedDateTime(newDateTime);
-      console.log('DateTime selected in parent:', newDateTime); // Do something with the selected date-time
+    // Do something with the selected date-time
     };
    
+
+    if(isVisibilityCheck)
+      {
+       return (
+         <ErrorOverlay />
+       )
+     }
+     
+    
+      if (canPost<=0) {
+        return (
+          <PostLimitOverlay/>
+        );  
+      } 
   // Get user data from Redux store
   return (
     <>
@@ -585,10 +567,12 @@ const handleClearFormData=()=>{
                     height: 50,
                     borderRadius: '50%',
                     objectFit: 'cover',
+                    border:'2px solid red'
+                   
                   }}
                 />
               )}
-              {accountName && <Typography variant="subtitle1">{accountName}</Typography>}
+              {accountName && <Typography sx={{color:'rgb(24,119,242)', fontFamily: 'Sleep',fontSize: '24px'}} variant="subtitle1">{accountName.toUpperCase()}</Typography>}
             </Stack>
   
             <Box sx={{ borderRadius: '5px', boxShadow: ' 2px 2px #b2b2b2' }}>
