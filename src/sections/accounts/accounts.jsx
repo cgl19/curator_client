@@ -21,6 +21,7 @@ function returnAccountIconImage(account) {
     twitter: '/assets/icons/navbar/ic_twitter.svg',
     linkedin: '/assets/icons/navbar/ic_linkedin.svg',
     tiktok: '/assets/icons/navbar/ic_tiktok.svg',
+    threedots:'/assets/icons/three-dots-vertical.svg',
   };
 
   return <img alt="icon" src={iconMap[account.type]} width={75} height={75} />;
@@ -174,6 +175,7 @@ const UserPage = () => {
               <AppWidgetSummary
                 title={<Box component="span">{account?.name.toUpperCase()}</Box>}
                 icon={returnAccountIconImage({ type: account?.platform.toLowerCase() })}
+                threedot={returnAccountIconImage({type:'threedots'})}
                 status={true}
                 accessTokenExpiry={account?.accessTokenExpiry}
                 style={gridItemStyle}
