@@ -35,7 +35,7 @@ const ErrorOverlay = ({ canPost, sidebarWidth = 280 }) => {
   Oops! something went unexpected while checking account visibility .
 </Typography>
     </Box>
-  );
+  );   
 }
 
 export default ErrorOverlay;

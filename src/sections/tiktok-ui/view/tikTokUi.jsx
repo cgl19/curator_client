@@ -332,6 +332,7 @@ const handleClearFormData = () => {
 
 
   useEffect(() => { 
+  
     if (disclosureEnabled) {
       if (commercialContent.includes('your_brand') && commercialContent.includes('branded_content')) {
         setComplianceMessage(
@@ -347,7 +348,8 @@ const handleClearFormData = () => {
             .
           </span>
         );
-      } else if (commercialContent.includes('your_brand')) {
+      } 
+      else if (commercialContent.includes('your_brand')) {
         setComplianceMessage(
           <span>
             By posting, you agree to 
@@ -356,7 +358,10 @@ const handleClearFormData = () => {
             </a>
             .
           </span>
-        );      } else if (commercialContent.includes('branded_content')) {
+        );     
+       } 
+      
+       else if (commercialContent.includes('branded_content')) {
         setComplianceMessage(  <span>
           By posting, you agree to 
           <a style={{ color: 'red',marginLeft:'2px' }} href="https://www.tiktok.com/legal/page/global/bc-policy/en" target="_blank" rel="noopener noreferrer">
@@ -370,13 +375,20 @@ const handleClearFormData = () => {
         </span>);
       }
     }
+    else{
+      setCommercialContent([])
+      setComplianceMessage('');
+    }
   }, [disclosureEnabled, commercialContent]);
 
   const handleDisclosureToggle = () => {
     setDisclosureEnabled(prev => !prev);
     if (!disclosureEnabled) {
       setComplianceMessage('');
+      setCommercialContent([])
+      
     }
+    
   };
 
   const handlePrivacyChange = (event) => {
@@ -450,6 +462,7 @@ const handleClearFormData = () => {
             height: '65%', // Custom height, adjust as needed
             maxHeight: '80vh', // Maximum height to ensure it doesn't exceed viewport height
             margin: 'auto', // Center dialog horizontally
+            
           },
         }}
       >
@@ -532,7 +545,7 @@ const handleClearFormData = () => {
           maxWidth: '100%',
           backgroundColor: 'white',
           borderRadius: 2,
-          boxShadow: 3,
+          // boxShadow: 3,
           p: 3,
           '@media (max-width:600px)': {
             maxWidth: '100%',
@@ -575,7 +588,7 @@ const handleClearFormData = () => {
               {accountName && <Typography sx={{color:'rgb(24,119,242)', fontFamily: 'Sleep',fontSize: '24px'}} variant="subtitle1">{accountName.toUpperCase()}</Typography>}
             </Stack>
   
-            <Box sx={{ borderRadius: '5px', boxShadow: ' 2px 2px #b2b2b2' }}>
+            <Box sx={{ borderRadius: '5px' }}>
               <Typography sx={{ fontSize: 13, marginLeft: 2 }}>
                 Post Title <RequiredAsterisk>*</RequiredAsterisk>
               </Typography>
@@ -588,25 +601,28 @@ const handleClearFormData = () => {
                 inputProps={{
                   style: {
                     fontSize: 15, // adjust the font size to your liking
+                    border:'3px solid whitesmoke'
                   },
                 }}
               />
             </Box>
   
-            <FormControl fullWidth margin="normal" sx={{ boxShadow: ' 2px 2px #b2b2b2', borderRadius: '5px' }}>
+            <FormControl fullWidth margin="normal" sx={{borderRadius: '5px' }}>
               <Typography sx={{ fontSize: 13, marginBottom: 2, marginLeft: 2 }}>
                 Privacy <RequiredAsterisk>*</RequiredAsterisk>
               </Typography>
-              <Select
+            <Select
             value={privacy}
             onChange={handlePrivacyChange}
             fullWidth
+            sx={{border:'3px solid whitesmoke'}}
             renderValue={(selectedValue) => (
               <span style={{ fontSize: '10px' }}>{selectedValue}</span>
             )}
+            
           >  
             {privacyOptions.map((option) => (
-              <MenuItem key={option.value} value={option.value} sx={{ fontSize: '10px' }}>
+              <MenuItem key={option.value} value={option.value} sx={{ fontSize: '10px', border:'13px solid whitesmoke' }}>
                 {option.label}
               </MenuItem>
             ))}
@@ -614,57 +630,69 @@ const handleClearFormData = () => {
             </FormControl>
   
             <FormControl fullWidth margin="normal">
-              <Box sx={{ my: 1, boxShadow: ' 2px 2px #b2b2b2', borderRadius: '5px' }}>
-                <Switch
-                  checked={disclosureEnabled}
-                  onChange={handleDisclosureToggle}
-                />
-                <Typography sx={{ mx: 2, fontSize: 13 }} variant="body2" color="textSecondary">
-                  Disclose Commercial Content <RequiredAsterisk>*</RequiredAsterisk>
-                </Typography>
-              </Box>
+        <Box sx={{ my: 1, borderRadius: '5px', display: 'flex', alignItems: 'center' }}>
+        <Switch
+          checked={disclosureEnabled}
+          onChange={handleDisclosureToggle}
+        />
+        <Typography sx={{ fontSize: 13 }} variant="body2" color="textSecondary">
+          Disclose Commercial Content <RequiredAsterisk>*</RequiredAsterisk>
+        </Typography>
+      </Box>
+
+
   
-              <Box sx={{ my: 1, boxShadow: ' 2px 2px #b2b2b2', borderRadius: '5px' }}>
-                {commercialContentOptions.map((option) => (
-                  <FormControlLabel
-                    key={option.value}
-                    control={
-                      <Switch
-                        sx={{ fontSize: 13, marginLeft: 1 }}
-                        checked={commercialContent.includes(option.value)}
-                        onChange={(e) => {
-                          if (e.target.checked) {
-                            setCommercialContent([...commercialContent, option.value]);
-                          } else {
-                            setCommercialContent(commercialContent.filter((value) => value !== option.value));
-                          }
-                        }}
-                        disabled={!disclosureEnabled}
-                      />
-                    }
-                    label={<span style={{ fontSize: 13 }}>{option.label}</span>}
-                  />
-                ))}
-              </Box>
+                  <Box sx={{ my: 1,  borderRadius: '5px' }}>
+              {commercialContentOptions.map((option) => (
+                <FormControlLabel
+                  key={option.value}
+                  control={
+                    <Switch
+                      sx={{ fontSize: 13, marginLeft: 1 }}
+                      checked={disclosureEnabled ? commercialContent.includes(option.value) : false}
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          setCommercialContent([...commercialContent, option.value]);
+                        } else {
+                          setCommercialContent(commercialContent.filter((value) => value !== option.value));
+                        }
+                      }}
+                      disabled={!disclosureEnabled}
+                    />
+                  }
+                  label={<span style={{ fontSize: 13 }}>{option.label}</span>}
+                />
+              ))}
+            </Box>
   
               {disclosureEnabled && commercialContent.length === 0 && (
                 <Typography variant="body2" color="error" sx={{ mt: 1, mx: 1 }}>
                   You need to indicate if your content promotes yourself, a third party, or both.
                 </Typography>
               )}
+
+            {commercialContent.includes('your_brand') && commercialContent.includes('branded_content') ? (
+            <Typography variant="body2" color="textSecondary" sx={{ mt: 1, mx: 1 }}>
+              Your photo/video will be labeled as <span style={{ color: 'rgb(24,119,242)' }}>'Paid partnership'</span>.
+            </Typography>
+          ) : (
+            <>
               {commercialContent.includes('your_brand') && (
                 <Typography variant="body2" color="textSecondary" sx={{ mt: 1, mx: 1 }}>
                   Your photo/video will be labeled as <span style={{ color: 'rgb(24,119,242)' }}>'Promotional content'</span>.
                 </Typography>
               )}
+
               {commercialContent.includes('branded_content') && (
                 <Typography variant="body2" color="textSecondary" sx={{ mt: 1, mx: 1 }}>
                   Your photo/video will be labeled as <span style={{ color: 'rgb(24,119,242)' }}>'Paid partnership'</span>.
                 </Typography>
               )}
-            </FormControl>
+            </>
+          )}
+                      </FormControl>
   
-            <Box sx={{ boxShadow: ' 2px 2px #b2b2b2', borderRadius: '5px' }}>
+            <Box sx={{  borderRadius: '5px' }}>
               <InputLabel sx={{ fontSize: 13, marginBottom: 2, marginLeft: 2 }}>
                 Interactions <RequiredAsterisk>*</RequiredAsterisk>
               </InputLabel>
@@ -702,7 +730,7 @@ const handleClearFormData = () => {
             </Box>
   
             {videoPreview && (
-              <Box sx={{ width: '100%', mt: 2, maxHeight: 600, border: '1px solid', borderColor: 'divider', boxShadow: ' 2px 2px #b2b2b2', borderRadius: '5px' }}>
+              <Box sx={{ width: '100%', mt: 2, maxHeight: 600, border: '1px solid', borderRadius: '5px' }}>
                 {postType === 'video' ? (
                   <video
                     src={videoPreview}
