@@ -5,7 +5,12 @@ import Label from 'src/components/label';
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
-import Tooltip from '@mui/material/Tooltip';
+import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
+import { styled } from '@mui/material/styles';
+import Button from '@mui/material/Button';
+import toast from 'react-hot-toast';
+import apiCall from 'src/utils/api';
+import Divider from '@mui/material/Divider';
 // ----------------------------------------------------------------------
 
 export default function AppWidgetSummary({
@@ -17,11 +22,45 @@ export default function AppWidgetSummary({
   status,
   color = 'primary',
   sx,
+  onSubmit,
+  getUserAccountsOnRefresh,
+  account,
   ...other
-}) 
+}) {
 
-{
+  const longText = `
+  Remove from platform
+  `;
   const now = new Date();
+   const handleSelectedPostAccount=()=>{
+    onSubmit();
+   }
+   const handleDetachedAndOthers=async()=>{
+
+    const uri = `${import.meta.env.VITE_BASE_BACKEND_URL}deleteUserAccounts`;
+    const response = await apiCall('POST', uri, {
+      id: account._id,
+    });
+    if (response.status) {
+      toast.success("Account has removed from the platform")
+      getUserAccountsOnRefresh();
+    }
+    else{
+      toast.error("Failed to remove account from the platform")
+    }
+   }
+
+
+
+   const CustomWidthTooltip = styled(({ className, ...props }) => (
+    <Tooltip {...props} classes={{ popper: className }} />
+  ))({
+    [`& .${tooltipClasses.tooltip}`]: {
+      maxWidth: 200,
+    },
+  });
+  
+
 
   return (
     <Card
@@ -39,18 +78,24 @@ export default function AppWidgetSummary({
       }}
       {...other}
     >
+      
       {threedot && (
-        <Box
-          sx={{
-            position: 'absolute',
-            top: 16, // Adjust as needed for spacing from the top
-            left: 16, // Adjust as needed for spacing from the left
-            width: 24,
-            height: 24,
-          }}
-        >
-          {threedot}
-        </Box>
+      <Box
+      sx={{
+        position: 'absolute',
+        top: 16, // Adjust as needed for spacing from the top
+        left: 16, // Adjust as needed for spacing from the left
+        width: 24,
+        height: 24,
+      }}
+      onClick={handleDetachedAndOthers}
+    >
+      <CustomWidthTooltip title={longText}>
+      <Box sx={{ '&:hover': { backgroundColor: 'rgb(239,244,242)', opacity:6 } }}>
+  {threedot}
+</Box>
+      </CustomWidthTooltip>
+    </Box>
       )}
   
       {accessTokenExpiry && accessTokenExpiry <= now ? (
@@ -85,9 +130,8 @@ export default function AppWidgetSummary({
         </Label>
       )}
   
-      <Stack spacing={0.5} justifyContent="center" alignItems="center">
+      <Stack spacing={0.5} justifyContent="center" alignItems="center" onClick={handleSelectedPostAccount}>
         {icon && <Box sx={{ width: 64, height: 64 }}>{icon}</Box>}
-  
         <Typography variant="h6">{title}</Typography>
         <Typography variant="subtitle2" sx={{ color: 'text.disabled' }}>
           {accessTokenExpiry?.toLocaleString().split(':')[0].split('-').slice(0, 3)}{' '}

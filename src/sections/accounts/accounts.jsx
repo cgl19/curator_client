@@ -12,7 +12,6 @@ import { useSelector, useDispatch } from 'react-redux';
 SwiperCore.use([Pagination, Navigation, Autoplay]);
 import apiCall from '../../../src/utils/api';
 
-
 function returnAccountIconImage(account) {
   const iconMap = {
     facebook: '/assets/icons/navbar/ic_facebook.svg',
@@ -21,7 +20,7 @@ function returnAccountIconImage(account) {
     twitter: '/assets/icons/navbar/ic_twitter.svg',
     linkedin: '/assets/icons/navbar/ic_linkedin.svg',
     tiktok: '/assets/icons/navbar/ic_tiktok.svg',
-    threedots:'/assets/icons/three-dots-vertical.svg',
+    threedots: '/assets/icons/three-dots-vertical.svg',
   };
 
   return <img alt="icon" src={iconMap[account.type]} width={75} height={75} />;
@@ -39,9 +38,7 @@ const UserPage = () => {
   const navigate = useNavigate();
   const user = useSelector((state) => state.auth.user);
   const [userAccounts, setuserAccounts] = useState([]);
- 
 
-  
   const handleFacebookPageClick = () => {
     navigate('/connection/facebook/page');
   };
@@ -80,20 +77,19 @@ const UserPage = () => {
     }
   };
 
-  const handleSelectedAccount=(platform,account_id)=>{
-      
-      if(platform.toLowerCase().includes('tiktok')){
-        navigate(`/tiktok/postupload/${platform}/${account_id}`);
-      }
-      toast("Waiting for platform resource...");
-      return;
-  }
+  const handleSelectedAccount = (platform, account_id) => {
+    if (platform.toLowerCase().includes('tiktok')) {
+      navigate(`/tiktok/postupload/${platform}/${account_id}`);
+    }
+    toast('Waiting for platform resource...');
+    return;
+  };
+
 
 
   useEffect(() => {
     getUserAccountDetail();
   }, []);
-
   return (
     <Container>
       <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
@@ -158,7 +154,7 @@ const UserPage = () => {
       </Swiper>
 
       <Typography marginTop={5} variant="h6">
-        Attached Accounts
+        Attached Accounts({userAccounts.length})
       </Typography>
 
       <Grid container marginTop={5}>
@@ -170,26 +166,25 @@ const UserPage = () => {
               sm={6}
               md={3}
               sx={{ justifyContent: 'center', alignItems: 'center' }}
-              onClick={(e) => handleSelectedAccount(account.platform, account._id)}
-          >
+            >
               <AppWidgetSummary
                 title={<Box component="span">{account?.name.toUpperCase()}</Box>}
                 icon={returnAccountIconImage({ type: account?.platform.toLowerCase() })}
-                threedot={returnAccountIconImage({type:'threedots'})}
+                threedot={returnAccountIconImage({ type: 'threedots' })}
                 status={true}
+                account={account}
                 accessTokenExpiry={account?.accessTokenExpiry}
                 style={gridItemStyle}
-
+                onSubmit={(e) => handleSelectedAccount(account.platform, account._id)}
+                getUserAccountsOnRefresh={getUserAccountDetail}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.transform = 'scale(1.02)';
-                  e.currentTarget.style.cursor='pointer'
+                  e.currentTarget.style.cursor = 'pointer';
                 }}
                 onMouseLeave={(e) => {
                   e.currentTarget.style.transform = 'scale(1)';
-                   e.currentTarget.style.cursor='default'
+                  e.currentTarget.style.cursor = 'default';
                 }}
-
-                
               />
             </Grid>
           ))}

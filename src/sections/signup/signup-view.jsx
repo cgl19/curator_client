@@ -155,7 +155,7 @@ export default function SignUpView() {
             </Link>
           </Typography>
 
-          <Stack direction="row" spacing={2}>
+          {/* <Stack direction="row" spacing={2}>
             <Button
               onClick={handleGoogleAuth}
               fullWidth
@@ -184,7 +184,7 @@ export default function SignUpView() {
             <Typography variant="body2" sx={{ color: 'text.secondary' }}>
               OR
             </Typography>
-          </Divider>
+          </Divider> */}
 
           <CSSTransition
             in={!step}

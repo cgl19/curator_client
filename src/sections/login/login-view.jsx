@@ -121,11 +121,11 @@ export default function LoginView() {
         />
       </Stack>
 
-      <Stack direction="row" alignItems="center" justifyContent="flex-end" sx={{ my: 3 }}>
+      {/* <Stack direction="row" alignItems="center" justifyContent="flex-end" sx={{ my: 3 }}>
         <Link variant="subtitle2" underline="hover">
           Forgot password?
         </Link>
-      </Stack>
+      </Stack> */}
 
       <LoadingButton
         fullWidth
@@ -136,6 +136,9 @@ export default function LoginView() {
         onClick={handleClick}
         loading={loading}
         disabled={loading}
+        sx={{
+          mt: 5,
+        }}
       >
         Login
       </LoadingButton>
@@ -194,7 +197,7 @@ export default function LoginView() {
     </Link>
   </Typography> 
 
-  <Stack direction="row" spacing={2}>
+  {/* <Stack direction="row" spacing={2}>
     <Button
       onClick={handleGoogleAuth}
       fullWidth
@@ -217,7 +220,7 @@ export default function LoginView() {
       <Iconify icon="eva:facebook-fill" color="#1877F2" />
     </Button>
 
-    {/* <Button
+    <Button
       fullWidth
       size="large"
       color="inherit"
@@ -225,14 +228,14 @@ export default function LoginView() {
       sx={{ borderColor: alpha(theme.palette.grey[500], 0.16) }}
     >
       <Iconify icon="eva:twitter-fill" color="#1C9CEA" />
-    </Button> */}
-  </Stack>
+    </Button>
+  </Stack> 
 
   <Divider sx={{ my: 3 }}>
     <Typography variant="body2" sx={{ color: 'text.secondary' }}>
       OR
     </Typography>
-  </Divider>
+  </Divider>*/}
 
   {renderForm}
 </Card>
