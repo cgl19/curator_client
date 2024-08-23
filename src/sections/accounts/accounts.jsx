@@ -20,9 +20,9 @@ function returnAccountIconImage(account) {
     twitter: '/assets/icons/navbar/ic_twitter.svg',
     linkedin: '/assets/icons/navbar/ic_linkedin.svg',
     tiktok: '/assets/icons/navbar/ic_tiktok.svg',
-    threedots: '/assets/icons/three-dots-vertical.svg',
+    threedots: '/assets/icons/delete-svg-com.svg',
+    // threedots: '/assets/icons/three-dots-vertical.svg',
   };
-
   return <img alt="icon" src={iconMap[account.type]} width={75} height={75} />;
 }
 
@@ -42,6 +42,7 @@ const UserPage = () => {
   const handleFacebookPageClick = () => {
     navigate('/connection/facebook/page');
   };
+
   const handleFacebookGroupClick = () => {
     navigate('/connection/facebook/group');
   };

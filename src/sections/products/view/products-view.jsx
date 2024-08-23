@@ -1,11 +1,12 @@
-import { useState } from 'react';
+import { useState,useEffect } from 'react';
 
 import Stack from '@mui/material/Stack';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Unstable_Grid2';
 import Typography from '@mui/material/Typography';
+import apiCall from 'src/utils/api';
+import { useSelector } from 'react-redux';
 
-import { products } from 'src/_mock/products';
 
 import ProductCard from '../product-card';
 import ProductSort from '../product-sort';
@@ -16,6 +17,8 @@ import ProductCartWidget from '../product-cart-widget';
 
 export default function ProductsView() {
   const [openFilter, setOpenFilter] = useState(false);
+ const [products,setProducts]=useState([]);
+  const user = useSelector((state) => state.auth.user);
 
   const handleOpenFilter = () => {
     setOpenFilter(true);
@@ -24,6 +27,17 @@ export default function ProductsView() {
   const handleCloseFilter = () => {
     setOpenFilter(false);
   };
+
+  useEffect(async() => {
+    const uri = `${import.meta.env.VITE_BASE_BACKEND_URL}post`;
+    const response = await apiCall('POST', uri, {
+      headers: { 'Content-Type': 'application/json' },
+      userId: user._id,
+    });
+    setProducts(response.post)
+    
+  },[]);
+  
 
   return (
     <Container>
@@ -56,8 +70,6 @@ export default function ProductsView() {
           </Grid>
         ))}
       </Grid>
-
-    
     </Container>
   );
 }

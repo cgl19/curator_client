@@ -17,11 +17,12 @@ const navConfig = [
     path: '/accounts',
     icon: icon('user-accounts'),
   },
-  {
-    title: 'Calendar',
-    path: '/calendar',
-    icon: icon('calendar'),
-  },
+  // {
+  //   title: 'Calendar',
+  //   path: '/calendar',
+  //   icon: icon('calendar'),
+  // },
+  
   {
     title: 'Posts',
     path: '/posts',

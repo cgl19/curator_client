@@ -119,19 +119,37 @@ export default function ShopProductCard({ product }) {
       console.error('Error during post submission', error);
     }
   };  
-  
+  const media = product.imagePath;
   const renderImg = (
-    <Box
-      component="img"
-      src={product.cover}
-      sx={{
-        top: 0,
-        width: 1,
-        height: 1,
-        objectFit: 'cover',
-        position: 'absolute',
-      }}
-    />
+    
+    media.endsWith('.mp4') || media.endsWith('.webm') ? (
+      <Box
+        component="video"
+        src={media}
+        sx={{
+          top: 0,
+          width: 1,
+          height: 1,
+          objectFit: 'cover',
+          position: 'absolute',
+        }}
+        autoPlay
+        muted
+        loop
+      />
+    ) : (
+      <Box
+        component="img"
+        src={media}
+        sx={{
+          top: 0,
+          width: 1,
+          height: 1,
+          objectFit: 'cover',
+          position: 'absolute',
+        }}
+      />
+    )
   );
 
   const renderActions = (
@@ -151,9 +169,9 @@ export default function ShopProductCard({ product }) {
       <Button variant="contained" size="small" color="info" onClick={handleOpenViewDialog}>
         View
       </Button>
-      <Button variant="contained" size="small" color="primary" onClick={handleOpenPostDialog}>
+      {/* <Button variant="contained" size="small" color="primary" onClick={handleOpenPostDialog}>
         Post
-      </Button>
+      </Button> */}
     </Stack>
   );
 
@@ -174,11 +192,11 @@ export default function ShopProductCard({ product }) {
 
         <Stack spacing={2} sx={{ p: 3 }}>
           <Link color="inherit" underline="hover" variant="subtitle2" noWrap>
-            {product.name}
+            {`Account Name: ${product.accountName}`}
           </Link>
 
           <Stack direction="row" alignItems="center" justifyContent="space-between">
-            <Typography variant="subtitle1">{product.status}</Typography>
+            <Typography variant="subtitle1"> {`Status: ${product.status}`}</Typography>
           </Stack>
         </Stack>
       </Card>
@@ -194,43 +212,67 @@ export default function ShopProductCard({ product }) {
           Post Details
         </DialogTitle>
         <DialogContent
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            gap: 2,
-            padding: '16px',
-          }}
-        >
-          <Box
-            component="img"
-            src={product.cover}
-            sx={{
-              width: '80%',
-              height: 'auto',
-              borderRadius: '8px',
-              boxShadow: 3,
-              mb: 2,
-            }}
-          />
-          <Typography variant="h6" sx={{ fontSize: '1rem', fontWeight: 'medium' }}>
-            {product.name}
-          </Typography>
-          {/* <Typography variant="subtitle1" sx={{ fontSize: '0.875rem' }}>
-            {`Price: $${product.price}`}
-          </Typography> */}
-          {/* {product.priceSale && (
-            <Typography variant="subtitle2" sx={{ fontSize: '0.875rem', color: 'red' }}>
-              {`Sale Price: $${product.priceSale}`}
-            </Typography>
-          )} */}
-          <Typography variant="body2" sx={{ fontSize: '0.75rem' }}>
-            {`Status: ${product.status}`}
-          </Typography>
-          {/* <Typography variant="body2" sx={{ fontSize: '0.75rem' }}>
-            {`Colors: ${product.colors.join(', ')}`}
-          </Typography> */}
-        </DialogContent>
+  sx={{
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    gap: 2,
+    padding: '16px',
+  }}
+>
+  {product.imagePath.endsWith('.mp4') || product.imagePath.endsWith('.webm') ? (
+    <Box
+      component="video"
+      src={product.imagePath}
+      sx={{
+        width: '80%',
+        height: 'auto',
+        borderRadius: '8px',
+        boxShadow: 3,
+        mb: 2,
+      }}
+      autoPlay
+      muted
+      loop
+    />
+  ) : (
+    <Box
+      component="img"
+      src={product.imagePath}
+      sx={{
+        width: '80%',
+        height: 'auto',
+        borderRadius: '8px',
+        boxShadow: 3,
+        mb: 2,
+      }}
+    />
+  )}
+  <Typography variant="h6" sx={{ fontSize: '1rem', fontWeight: 'medium' }}>
+    {product.name}
+  </Typography>
+  {/* <Typography variant="subtitle1" sx={{ fontSize: '0.875rem' }}>
+    {`Price: $${product.price}
+  </Typography> */}
+  {/* {product.priceSale && (
+    <Typography variant="subtitle2" sx={{ fontSize: '0.875rem', color: 'red' }}>
+      {`Sale Price: $${product.priceSale}`}
+    </Typography>
+  )} */}
+  <Typography variant="body2" sx={{ fontSize: '0.75rem' }}>
+    {`User Name: ${product.userName.toUpperCase()}`}
+  </Typography>
+
+  <Typography variant="body2" sx={{ fontSize: '0.75rem' }}>
+    {`Meida Type: ${product.platform.toUpperCase()}`}
+  </Typography>
+  <Typography variant="body2" sx={{ fontSize: '0.75rem' }}>
+    {`Account Title: ${product.accountName.toUpperCase()}`}
+  </Typography>
+  <Typography variant="body2" sx={{ fontSize: '0.75rem' }}>
+    {`Status: ${product.status.toUpperCase()}`}
+  </Typography>
+</DialogContent>
         <DialogActions
           sx={{
             justifyContent: 'center',
