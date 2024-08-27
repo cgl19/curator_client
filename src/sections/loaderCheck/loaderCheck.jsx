@@ -1,7 +1,7 @@
 // src/components/LoaderCheck.js
 import React from 'react';
 import Button from '@mui/material/Button';
-import { useLoader } from '../../loaderContext/LoaderContext';
+import { useLoader } from '../../loaderContext/loaderContext';
 
 const LoaderCheck = () => {
   const { isLoading, showLoader, hideLoader } = useLoader();
