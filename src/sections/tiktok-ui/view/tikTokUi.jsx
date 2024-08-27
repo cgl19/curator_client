@@ -557,19 +557,7 @@ export default function TikTokPostUpload() {
           }}
         >
           <form>
-            {/* <Typography
-              sx={{ 
-                color: '#25F4EE',       // TikTok teal color
-                fontSize: '1.25rem',     // Large font size
-                fontWeight: 'bold'       // Make the text bold
-              }} 
-              variant="h4" 
-              textAlign="center" 
-              gutterBottom
-            >
-              Post to TikTok
-            </Typography> */}
-
+           
             <Stack spacing={2}>
               <Stack direction="row" alignItems="center" spacing={2}>
                 {profilePhoto && (
@@ -627,7 +615,8 @@ export default function TikTokPostUpload() {
 
               <FormControl fullWidth margin="normal" sx={{ borderRadius: '5px' }}>
                 <Typography sx={{ fontSize: 13, marginBottom: 2, marginLeft: 2 }}>
-                  Privacy <RequiredAsterisk>*</RequiredAsterisk>
+                  Privacy
+                   {/* <RequiredAsterisk>*</RequiredAsterisk> */}
                 </Typography>
                 <Select
                   value={privacy}
@@ -656,7 +645,8 @@ export default function TikTokPostUpload() {
                 <Box sx={{ my: 1, borderRadius: '5px', display: 'flex', alignItems: 'center' }}>
                   <Switch checked={disclosureEnabled} onChange={handleDisclosureToggle} />
                   <Typography sx={{ fontSize: 13 }} variant="body2" color="textSecondary">
-                    Disclose Commercial Content <RequiredAsterisk>*</RequiredAsterisk>
+                    Disclose Commercial Content 
+                    {/* <RequiredAsterisk>*</RequiredAsterisk> */}
                   </Typography>
                 </Box>
 
@@ -722,7 +712,8 @@ export default function TikTokPostUpload() {
 
               <Box sx={{ borderRadius: '5px' }}>
                 <InputLabel sx={{ fontSize: 13, marginLeft: 2 }}>
-                  Interactions <RequiredAsterisk>*</RequiredAsterisk>
+                  Interactions 
+                  {/* <RequiredAsterisk>*</RequiredAsterisk> */}
                 </InputLabel>
 
                 <FormControl fullWidth margin="normal">

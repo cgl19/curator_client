@@ -1,24 +1,53 @@
-import { faker } from '@faker-js/faker';
 
+import { useSelector } from 'react-redux';
+import { useEffect, useState } from 'react';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Unstable_Grid2';
 import Typography from '@mui/material/Typography';
-import Iconify from 'src/components/iconify';
-
-import AppTasks from '../app-tasks';
-import AppNewsUpdate from '../app-news-update';
-import AppOrderTimeline from '../app-order-timeline';
 import AppCurrentVisits from '../app-current-visits';
 import AppWebsiteVisits from '../app-website-visits';
 import AppWidgetSummary from '../app-widget-summary';
-import AppTrafficBySite from '../app-traffic-by-site';
-import AppCurrentSubject from '../app-current-subject';
-import AppConversionRates from '../app-conversion-rates';
-import { useSelector } from 'react-redux';
+import apiCall from 'src/utils/api';
+import toast from 'react-hot-toast';
 
 export default function AppView() {
   const user = useSelector(state => state.auth.user);
+  const [userStats,setuserStats]=useState([]);
  
+  useEffect(() => {
+    (async () => {
+      if (user) {
+        const uri = `${import.meta.env.VITE_BASE_BACKEND_URL}postdetails`;
+        try {
+          const response = await apiCall("POST", uri, {
+            userId: user._id,
+          });
+
+          if(response.status==true){
+            const stateData={
+              totalPosts:response.total,
+              posted:response.posted,
+              failed:response.failed,
+            }
+            setuserStats(stateData)
+          }
+          else{
+            const stateData={
+              totalPosts:0,
+              posted:0,
+              failed:0,
+            }
+            setuserStats(stateData)
+          }
+         
+          // Handle the response here
+        } 
+        catch (error) {
+         toast.error("Something went wrong while fetching user actitvities");
+        }
+      }
+    })();
+  }, [user]); 
 
   return (
     <Container maxWidth="xl" sx={{ height: '100%', overflow: 'hidden' }}>
@@ -26,36 +55,36 @@ export default function AppView() {
         Hi, Welcome back 👋
       </Typography>
       <Grid container spacing={3} sx={{ height: '100%' }}>
-        <Grid xs={12} sm={6} md={3}>
+        <Grid xs={12} sm={6} md={6}>
           <AppWidgetSummary
-            title="Weekly Posts"
-            total={71}
+            title="Posted"
+            total={userStats.posted}
             color="success"
-            icon={<img alt="icon" src="/assets/icons/glass/ic_glass_bag.png" />}
+            icon={<img alt="icon" src="/assets/icons/glass/ic_glass_message.png" />}
           /> 
         </Grid>
-        <Grid xs={12} sm={6} md={3}>
+        <Grid xs={12} sm={6} md={6}>
           <AppWidgetSummary
             title="Total Posts"
-            total={20}
+            total={userStats.totalPosts}
             color="info"
-            icon={<img alt="icon" src="/assets/icons/glass/ic_glass_users.png" />}
+            icon={<img alt="icon" src="/assets/icons/glass/ic_total.jpg" />}
           />
         </Grid>
-        <Grid xs={12} sm={6} md={3}>
+        <Grid xs={12} sm={6} md={6}>
           <AppWidgetSummary
-            title="Pending Posts"
-            total={17}
+            title="Failed Posts"
+            total={userStats.failed}
             color="warning"
-            icon={<img alt="icon" src="/assets/icons/glass/ic_glass_buy.png" />}
+            icon={<img alt="icon" src="/assets/icons/glass/ic_failed.jpg" />}
           />
         </Grid>
-        <Grid xs={12} sm={6} md={3}>
+        <Grid xs={12} sm={6} md={6}>
           <AppWidgetSummary
             title="Scheduled Posts"
-            total={14}
+            total={0}
             color="error"
-            icon={<img alt="icon" src="/assets/icons/glass/ic_glass_message.png" />}
+            icon={<img alt="icon" src="/assets/icons/glass/ic_purple_schedule.jpg" />}
           />
         </Grid> 
 

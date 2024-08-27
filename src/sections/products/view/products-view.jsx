@@ -28,15 +28,22 @@ export default function ProductsView() {
     setOpenFilter(false);
   };
 
-  useEffect(async() => {
-    const uri = `${import.meta.env.VITE_BASE_BACKEND_URL}post`;
-    const response = await apiCall('POST', uri, {
-      headers: { 'Content-Type': 'application/json' },
-      userId: user._id,
-    });
-    setProducts(response.post)
-    
-  },[]);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const uri = `${import.meta.env.VITE_BASE_BACKEND_URL}post`;
+        const response = await apiCall('POST', uri, {
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ userId: user._id })
+        });
+        setProducts(response.post);
+      } catch (error) {
+        console.error('Error fetching products:', error);
+      }
+    }; 
+
+    fetchData();
+  }, [user._id]);
   
 
   return (
@@ -64,8 +71,8 @@ export default function ProductsView() {
       </Stack>
 
       <Grid container spacing={3}>
-        {products.map((product) => (
-          <Grid key={product.id} xs={12} sm={6} md={3}>
+        { products && products.map((product) => (
+          <Grid key={product._id} xs={12} sm={6} md={3}>
             <ProductCard product={product} />
           </Grid>
         ))}
