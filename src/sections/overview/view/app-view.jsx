@@ -55,39 +55,40 @@ export default function AppView() {
         Hi, Welcome back 👋
       </Typography>
       <Grid container spacing={3} sx={{ height: '100%' }}>
-        <Grid xs={12} sm={6} md={6}>
+        <Grid xs={12} sm={6} md={3}>
           <AppWidgetSummary
-            title="Posted"
-            total={userStats.posted}
+            title="All Posted"
+            total={userStats?.posted}
             color="success"
             icon={<img alt="icon" src="/assets/icons/glass/ic_glass_message.png" />}
           /> 
         </Grid>
-        <Grid xs={12} sm={6} md={6}>
+        <Grid xs={12} sm={6} md={3}>
           <AppWidgetSummary
             title="Total Posts"
-            total={userStats.totalPosts}
+            total={userStats?.totalPosts}
             color="info"
-            icon={<img alt="icon" src="/assets/icons/glass/ic_total.jpg" />}
+            icon={<img alt="icon" src="/assets/icons/glass/ic_glass_users.png" />}
           />
         </Grid>
-        <Grid xs={12} sm={6} md={6}>
+        <Grid xs={12} sm={6} md={3}>
           <AppWidgetSummary
-            title="Failed Posts"
-            total={userStats.failed}
+            title="Failed"
+            total={userStats?.failed==0?1:0}
             color="warning"
             icon={<img alt="icon" src="/assets/icons/glass/ic_failed.jpg" />}
           />
         </Grid>
-        <Grid xs={12} sm={6} md={6}>
+        <Grid xs={12} sm={6} md={3}>
           <AppWidgetSummary
-            title="Scheduled Posts"
-            total={0}
+            title="Scheduled"
+            total={1}
+            // total={userStats?.scheduled==0?1:0}
             color="error"
             icon={<img alt="icon" src="/assets/icons/glass/ic_purple_schedule.jpg" />}
           />
         </Grid> 
-
+{/* 
         <Grid xs={12} md={6} lg={8}> 
           <AppWebsiteVisits
             title="Total Posts"
@@ -134,7 +135,7 @@ export default function AppView() {
           <AppCurrentVisits
             title="Current Insights"
             chart={{
-              series: [ 
+              series: [           
                 { label: 'Total Posts', value: 4344 },
                 { label: 'Pending Posts', value: 5435 },
                 { label: 'Scheduled Posts', value: 1443 },
@@ -142,7 +143,7 @@ export default function AppView() {
               ],
             }}
           />
-        </Grid>
+        </Grid> */}
       </Grid>
     </Container>
   ); 

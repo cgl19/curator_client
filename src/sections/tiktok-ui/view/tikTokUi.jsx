@@ -252,7 +252,7 @@ export default function TikTokPostUpload() {
       formData.append('isScheduled', isScheduled);
 
       if (isScheduled) {
-        formData.append('scheduledDateTime', selectedDateTime);
+        formData.append('scheduleAt', selectedDateTime);
       }
 
       const uri = `${import.meta.env.VITE_BASE_BACKEND_URL}tiktokMedia`;
@@ -288,6 +288,7 @@ export default function TikTokPostUpload() {
     setInteractions([]);
     setCommercialContent([]);
     setDisclosureEnabled(false);
+    setIsScheduled(false);
 
     toast.success('Data cleared successfully 🎉');
   };

@@ -31,12 +31,12 @@ const PostLimitOverlay = ({ canPost, sidebarWidth = 280 }) => {
           fontSize: '24px',
           fontStyle: 'italic', // or 'bold', 'oblique', etc.
           color:'white'
-        }}
+        }} 
       >
         You have reached your daily posting limit of (15) on this account . Please try again after 24 hours or try with different account.
       </Typography>
-    </Box>
-  );
+    </Box> 
+  ); 
 } 
 
 export default PostLimitOverlay;

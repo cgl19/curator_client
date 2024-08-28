@@ -25,7 +25,6 @@ export default function Header({ onOpenNav }) {
   const theme = useTheme();
 
   const lgUp = useResponsive('up', 'lg');
-
   const renderContent = (
     <>
       {!lgUp && (
@@ -33,11 +32,8 @@ export default function Header({ onOpenNav }) {
           <Iconify icon="eva:menu-2-fill" />
         </IconButton>
       )}
-
-      <Searchbar />
-
+      {/* <Searchbar /> */}
       <Box sx={{ flexGrow: 1 }} />
-
       <Stack direction="row" alignItems="center" spacing={1}>
         {/* <NotificationsPopover /> */}
         <AccountPopover />
@@ -52,7 +48,6 @@ export default function Header({ onOpenNav }) {
         height: HEADER.H_MOBILE,
         zIndex: theme.zIndex.appBar + 1,
         background: '#F0F4F8',
-       
        
         transition: theme.transitions.create(['height'], {
           duration: theme.transitions.duration.shorter,

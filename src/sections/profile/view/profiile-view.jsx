@@ -1,17 +1,15 @@
-import React from 'react';
+import React, { useState } from 'react';
 import toast from 'react-hot-toast';
-import { Container, Typography, TextField, MenuItem, Box, Avatar, Grid, useMediaQuery, useTheme, Button, Paper, Autocomplete } from '@mui/material';
+import { Container, Typography, TextField, MenuItem, Box, Avatar, Grid, useMediaQuery, useTheme, Button, Paper } from '@mui/material';
 import { useSelector } from 'react-redux';
 
 // Mock function for saving profile
-const handleProfileSave = () => {
-  toast.success("Saved Successfully!");
-}
+
 
 const genders = [
-  { value: 'male', label: 'Male' },
-  { value: 'female', label: 'Female' },
-  { value: 'other', label: 'Other' },
+  { value: 'Male', label: 'Male' },
+  { value: 'Female', label: 'Female' },
+  { value: 'Other', label: 'Other' },
 ];
 
 const countries = [
@@ -23,9 +21,9 @@ const countries = [
 ];
 
 const languages = [
-  { value: 'en', label: 'English' },
-  { value: 'ur', label: 'Urdu' },
-  { value: 'ar', label: 'Arabic' },
+  { value: 'English', label: 'English' },
+  { value: 'Urdu', label: 'Urdu' },
+  { value: 'Arabic', label: 'Arabic' },
 ];
 
 const interval = [
@@ -33,20 +31,36 @@ const interval = [
   { value: '2', label: 'Once a week' },
   { value: '3', label: 'Once a month' },
 ];
- 
-const preferences = [
-  { value: 'sports', label: 'Sports' },
-  { value: 'music', label: 'Music' },
-  { value: 'movies', label: 'Movies' },
-  { value: 'reading', label: 'Reading' },
-  { value: 'traveling', label: 'Traveling' },
-  { value: 'gaming', label: 'Gaming' },
-  // Add more preferences as needed
-];
 
 export default function ProfileView() {
   const user = useSelector((state) => state.auth.user);
-  console.log(user);
+ 
+
+  // Create local state to hold the form data
+  const [formData, setFormData] = useState({
+    fullName: user.fullName || '',
+    email: user.email || '',
+    age: user.age || '',
+    gender: user.gender || '',
+    country: user.country || '',
+    language: user.language || '',
+    interval: user.interval || '',
+  });
+
+  const handleProfileSave = () => { 
+    console.log(formData)
+    toast.success("Saved Successfully!");
+  }
+
+  // Handle input changes
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
+
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
 
@@ -66,39 +80,43 @@ export default function ProfileView() {
         <Grid container spacing={2}>
           <Grid item xs={12} sm={6}>
             <TextField
+              name="fullName"
               label={<span>Name <span style={{ color: 'red' }}>*</span></span>}
-              value={user.fullName}
+              value={formData.fullName}
               variant="outlined"
               fullWidth
-             
+              onChange={handleInputChange}
             />
           </Grid>
           <Grid item xs={12} sm={6}>
             <TextField
+              name="email"
               label={<span>Email <span style={{ color: 'red' }}>*</span></span>}
-              value={user.email}
+              value={formData.email}
               variant="outlined"
               fullWidth
-              
+              onChange={handleInputChange}
             />
           </Grid>
           <Grid item xs={12} sm={6}>
             <TextField
+              name="age"
               label={<span>Age <span style={{ color: 'red' }}>*</span></span>}
-              value={user.age}
+              value={formData.age}
               variant="outlined"
               fullWidth
-             
+              onChange={handleInputChange}
             />
           </Grid>
           <Grid item xs={12} sm={6}>
             <TextField
+              name="gender"
               label={<span>Gender <span style={{ color: 'red' }}>*</span></span>}
-              value={user.gender}
+              value={formData.gender}
               variant="outlined"
-             
+              select
               fullWidth
-             
+              onChange={handleInputChange}
             >
               {genders.map((option) => (
                 <MenuItem key={option.value} value={option.value}>
@@ -109,12 +127,13 @@ export default function ProfileView() {
           </Grid>
           <Grid item xs={12} sm={6}>
             <TextField
+              name="country"
               label={<span>Country <span style={{ color: 'red' }}>*</span></span>}
-              value={user.country}
+              value={formData.country}
               variant="outlined"
               select
               fullWidth
-              
+              onChange={handleInputChange}
             >
               {countries.map((option) => (
                 <MenuItem key={option.value} value={option.value}>
@@ -125,12 +144,13 @@ export default function ProfileView() {
           </Grid>
           <Grid item xs={12} sm={6}>
             <TextField
+              name="language"
               label={<span>Language <span style={{ color: 'red' }}>*</span></span>}
-              value={user.language}
+              value={formData.language}
               variant="outlined"
               select
               fullWidth
-             
+              onChange={handleInputChange}
             >
               {languages.map((option) => (
                 <MenuItem key={option.value} value={option.value}>
@@ -139,14 +159,15 @@ export default function ProfileView() {
               ))}
             </TextField>
           </Grid>
-          <Grid item xs={12} sm={12}>
+          {/* <Grid item xs={12} sm={12}>
             <TextField
-             value={user?.interval}
+              name="interval"
+              value={formData.interval}
               label={<span>Interval <span style={{ color: 'red' }}>*</span></span>}
               variant="outlined"
               select
               fullWidth
-              
+              onChange={handleInputChange}
             >
               {interval.map((option) => (
                 <MenuItem key={option.value} value={option.value}>
@@ -154,23 +175,6 @@ export default function ProfileView() {
               </MenuItem>
               ))}
             </TextField>
-          </Grid>
-          {/* <Grid item xs={12}>
-            <Autocomplete
-              multiple  
-              options={preferences}
-              getOptionLabel={(option) => option.label}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  variant="outlined"
-                  label={<span>Preferences <span style={{ color: 'red' }}>*</span></span>}
-                  placeholder="Select preferences"
-                 
-                />
-              )}
-              fullWidth
-            />
           </Grid> */}
         </Grid>
         <Box display="flex" justifyContent="flex-end" mt={3}>

@@ -163,6 +163,7 @@ const UserPage = () => {
           userAccounts?.map((account) => (
             <Grid
               item
+              key={account._id} // Unique key assigned here
               xs={12}
               sm={6}
               md={3}

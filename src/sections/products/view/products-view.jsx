@@ -71,12 +71,13 @@ export default function ProductsView() {
       </Stack>
 
       <Grid container spacing={3}>
-        { products && products.map((product) => (
-          <Grid key={product._id} xs={12} sm={6} md={3}>
-            <ProductCard product={product} />
-          </Grid>
-        ))}
-      </Grid>
+  {products && products.slice().reverse().map((product) => (
+    <Grid item key={product._id} xs={12} sm={6} md={3}>
+      <ProductCard product={product} />
+    </Grid>
+  ))}
+</Grid>
+
     </Container>
   );
 }
