@@ -7,15 +7,15 @@ import Typography from '@mui/material/Typography';
 import apiCall from 'src/utils/api';
 import { useSelector } from 'react-redux';
 
-import ProductCard from '../product-card';
+import ProductCard from './product-card';
 // will use later
-import ProductSort from '../product-sort';
-import ProductFilters from '../product-filters';
-import ProductCartWidget from '../product-cart-widget';
+import ProductSort from './product-sort';
+import ProductFilters from './product-filters';
+import ProductCartWidget from './product-cart-widget';
 // will use later
 // ----------------------------------------------------------------------
 
-export default function ProductsView() {
+export default function Scheduled_Failed_Page() {
   const [openFilter, setOpenFilter] = useState(false);
   const [products, setProducts] = useState([]);
   const user = useSelector((state) => state.auth.user);
@@ -48,7 +48,7 @@ export default function ProductsView() {
   return (
     <Container>
       <Typography variant="h4" sx={{ mb: 5 }}>
-        Posts
+        Scheduled/Failed Posts
       </Typography>
 
       <Stack

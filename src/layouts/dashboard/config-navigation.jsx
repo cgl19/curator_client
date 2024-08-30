@@ -29,10 +29,15 @@ const navConfig = [
     icon: icon('posts'),
   },
   {
-    title: 'Media',
-    path: '/media',
-    icon: icon('album'),
+    title: 'Scheduled/Failed',
+    path: '/posts/scheduled-failed',
+    icon: icon('posts'),
   },
+  // {
+  //   title: 'Media',
+  //   path: '/media',
+  //   icon: icon('album'),
+  // },
   // {
   //   title: 'Publish to Tiktok',
   //   path: '/tiktok/postupload',

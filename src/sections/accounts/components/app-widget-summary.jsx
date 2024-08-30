@@ -11,6 +11,7 @@ import Button from '@mui/material/Button';
 import toast from 'react-hot-toast';
 import apiCall from 'src/utils/api';
 import Divider from '@mui/material/Divider';
+import Iconify from 'src/components/iconify';
 // ----------------------------------------------------------------------
 
 export default function AppWidgetSummary({
@@ -133,8 +134,28 @@ export default function AppWidgetSummary({
         <Typography variant="subtitle2" sx={{ color: 'text.disabled' }}>
           {accessTokenExpiry?.toLocaleString().split(':')[0].split('-').slice(0, 3)}{' '}
         </Typography>
-        <Button>
-          <Typography fontWeight="bold">Post Now</Typography>
+        <Button
+          variant="outlined"
+          color="inherit"
+          startIcon={
+            <Iconify
+              icon="eva:paper-plane-fill" // Use a "send" or "paper plane" icon
+              sx={{
+                color: '#FF8A65', // Matching icon color with your orange gradient theme
+              }}
+            />
+          }
+          sx={{
+            borderColor: '#FF8A65', // Matching the border color with your orange theme
+            color: '#FF8A65', // Text color matching the orange theme
+            '&:hover': {
+              backgroundColor: 'black', // Orange background on hover
+              color: 'white', // White text on hover
+              borderColor: '#FF8A65', // Maintaining the border color on hover
+            },
+          }}
+        >
+          Post Here
         </Button>
       </Stack>
     </Card>

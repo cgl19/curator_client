@@ -27,6 +27,7 @@ export default function AppView() {
             const stateData={
               totalPosts:response.total,
               posted:response.posted,
+              schedule:response.schedule,
               failed:response.failed,
             }
             setuserStats(stateData)
@@ -35,6 +36,7 @@ export default function AppView() {
             const stateData={
               totalPosts:0,
               posted:0,
+              schedule:0,
               failed:0,
             }
             setuserStats(stateData)
@@ -55,9 +57,18 @@ export default function AppView() {
         Hi, Welcome back 👋
       </Typography>
       <Grid container spacing={3} sx={{ height: '100%' }}>
+      <Grid xs={12} sm={6} md={3}>
+          <AppWidgetSummary
+            title="Total Posts"
+            total={userStats?.totalPosts}
+            color="info"
+            spacing={5}
+            icon={<img alt="icon" src="/assets/icons/glass/ic_glass_users.png" />}
+          />
+        </Grid>
         <Grid xs={12} sm={6} md={3}>
           <AppWidgetSummary
-            title="All Posted"
+            title="Total Posted"
             total={userStats?.posted}
             color="success"
             icon={<img alt="icon" src="/assets/icons/glass/ic_glass_message.png" />}
@@ -65,29 +76,22 @@ export default function AppView() {
         </Grid>
         <Grid xs={12} sm={6} md={3}>
           <AppWidgetSummary
-            title="Total Posts"
-            total={userStats?.totalPosts}
-            color="info"
-            icon={<img alt="icon" src="/assets/icons/glass/ic_glass_users.png" />}
-          />
-        </Grid>
-        <Grid xs={12} sm={6} md={3}>
-          <AppWidgetSummary
-            title="Failed"
-            total={userStats?.failed==0?1:0}
-            color="warning"
-            icon={<img alt="icon" src="/assets/icons/glass/ic_failed.jpg" />}
-          />
-        </Grid>
-        <Grid xs={12} sm={6} md={3}>
-          <AppWidgetSummary
-            title="Scheduled"
-            total={1}
+            title="Scheduled Posts"
+            total={userStats?.schedule}
             // total={userStats?.scheduled==0?1:0}
             color="error"
-            icon={<img alt="icon" src="/assets/icons/glass/ic_purple_schedule.jpg" />}
+            icon={<img alt="icon" src="/assets/icons/glass/clock-color-icon.svg" />}
           />
         </Grid> 
+        <Grid xs={12} sm={6} md={3}>
+          <AppWidgetSummary
+            title="Failed Posts"
+            total={userStats?.failed}
+            color="warning"
+            icon={<img alt="icon" src="/assets/icons/glass/red-x-icon.svg" />}
+          />
+        </Grid>
+        
 {/* 
         <Grid xs={12} md={6} lg={8}> 
           <AppWebsiteVisits

@@ -16,6 +16,7 @@ export const SignupPage = lazy(() => import('src/pages/signup'));
 export const LogoutPage = lazy(() => import('src/pages/logout'));
 export const AddAccounts = lazy(() => import('src/pages/accounts'));
 export const ProductsPage = lazy(() => import('src/pages/products'));
+export const ScheduledPage = lazy(() => import('src/pages/scheduled_failed'));
 export const FaceBookPageConnection = lazy(() => import('src/pages/accountsConnection/facebookPageConnection'));
 export const FaceBookGroupConnection = lazy(() => import('src/pages/accountsConnection/facebookGroupConnection'));
 export const InstagramConnection = lazy(() => import('src/pages/accountsConnection/instagram'));
@@ -45,6 +46,7 @@ export default function Router() {
         { path: 'user', element: <PrivateRoute element={<UserPage />} /> },
         { path: 'accounts', element: <PrivateRoute element={<AddAccounts />} /> },
         { path: 'posts', element: <PrivateRoute element={<ProductsPage />} /> },
+        { path: 'posts/scheduled-failed', element: <PrivateRoute element={<ScheduledPage />} /> },
         { path: 'calendar', element: <PrivateRoute element={<CalendarPage />} /> },
         { path: 'media', element: <PrivateRoute element={<MediaPage />} /> },
         { path: 'profile', element: <PrivateRoute element={<ProfilePage />} /> },

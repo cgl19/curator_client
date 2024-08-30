@@ -289,6 +289,7 @@ export default function TikTokPostUpload() {
     setCommercialContent([]);
     setDisclosureEnabled(false);
     setIsScheduled(false);
+    console.log(isScheduled);
 
     toast.success('Data cleared successfully 🎉');
   };
