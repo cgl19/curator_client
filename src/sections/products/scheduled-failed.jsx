@@ -28,6 +28,10 @@ export default function Scheduled_Failed_Page() {
     setOpenFilter(false);
   };
 
+  const filteredProducts = products.filter(
+    (product) => product.status === "scheduled" || product.status === "failed"
+  )
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -36,8 +40,10 @@ export default function Scheduled_Failed_Page() {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ userId: user._id }),
         });
+        console.log(response.post);
         setProducts(response.post);
-      } catch (error) {
+      }
+      catch (error) {
         console.error('Error fetching products:', error);
       }
     };
@@ -58,28 +64,15 @@ export default function Scheduled_Failed_Page() {
         justifyContent="flex-end"
         sx={{ mb: 5 }}
       >
-        {/* <Stack direction="row" spacing={1} flexShrink={0} sx={{ my: 1 }}>
-          <ProductFilters
-            openFilter={openFilter}
-            onOpenFilter={handleOpenFilter}
-            onCloseFilter={handleCloseFilter}
-          />
-
-          <ProductSort />
-        </Stack> */}
       </Stack>
 
-      <Grid container spacing={3}>
-        {products &&
-          products
-            .slice()
-            .reverse()
-            .map((product) => (
-              <Grid item key={product._id} xs={12} sm={6} md={3}>
-                <ProductCard product={product} />
-              </Grid>
-            ))}
-      </Grid>
+  <Grid container spacing={3}>
+  {filteredProducts.map((product) => (
+    <Grid item key={product._id} xs={12} sm={6} md={3}>
+      <ProductCard product={product} />
+    </Grid>
+  ))}
+</Grid>
     </Container>
   );
 }

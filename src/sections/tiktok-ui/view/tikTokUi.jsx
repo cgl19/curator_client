@@ -58,7 +58,7 @@ export default function TikTokPostUpload() {
   const [checkPostAccountAvailibility, setcheckPostAccountAvailibility] = useState({});
   const [openScheduleDialogue, setopenScheduleDialogue] = useState(false);
   const [selectedDateTime, setSelectedDateTime] = useState(null);
-  const [isScheduled, setIsScheduled] = useState(false);
+  const [isScheduled, setIsScheduled] = useState(true);
   const [postAccountId, setPostAccountId] = useState(null); // or useState('')
   const [isVisibilityCheck, setIsVisibilityCheck] = useState(false);
 
@@ -289,9 +289,7 @@ export default function TikTokPostUpload() {
     setCommercialContent([]);
     setDisclosureEnabled(false);
     setIsScheduled(false);
-    console.log(isScheduled);
-
-    toast.success('Data cleared successfully 🎉');
+    console.log(isScheduled);   
   };
 
   //handling the route parameters

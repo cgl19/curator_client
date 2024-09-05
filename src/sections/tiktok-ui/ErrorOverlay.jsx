@@ -32,7 +32,7 @@ const ErrorOverlay = ({ canPost, sidebarWidth = 280 }) => {
      color:'white'
   }}
 >
-  Oops! something went unexpected while checking account visibility .
+  Oops! something went unexpected while checking account availibility .
 </Typography>
     </Box>
   );   

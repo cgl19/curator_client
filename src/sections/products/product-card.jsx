@@ -44,7 +44,6 @@ export default function ShopProductCard({ product }) {
   const [authUser, setAuthUser] = useState({});
 
   const user = useSelector((state) => state.auth.user);
-  
 
   useEffect(() => {
     setAuthUser(user);
@@ -170,10 +169,10 @@ export default function ShopProductCard({ product }) {
         Post
       </Button> */}
     </Stack>
-  ); 
+  );
 
   return (
-    <> 
+    <>
       <Card
         sx={{
           position: 'relative',
@@ -187,19 +186,24 @@ export default function ShopProductCard({ product }) {
           {renderActions}
         </Box>
 
-        <Stack spacing={2} sx={{ p: 3 }}>
+        <Stack  sx={{ p: 3 }}>
           <Link color="inherit" underline="hover" variant="subtitle2" noWrap>
             {`Account Name: ${product.accountName}`}
           </Link>
 
           <Stack direction="row" alignItems="center" justifyContent="space-between">
-            <Typography variant="subtitle1"> {`Status: ${product.status}`}</Typography>
+          {/* <Typography variant="subtitle2">
+            {`Posted At: ${new Date(product.postedAt).getDate()} ${new Date(product.postedAt).getFullYear()} ${new Date(product.postedAt).toLocaleTimeString('en-US', {
+              hour12: false, // 24-hour format
+              hour: '2-digit',
+              minute: '2-digit',
+              second: '2-digit',
+            })}`}
+          </Typography> */}
           </Stack>
+          {/* Formatting the postedAt date */}
         </Stack>
       </Card>
-
-
-
 
       <Dialog
         PaperComponent={PaperComponent}
@@ -222,8 +226,8 @@ export default function ShopProductCard({ product }) {
             fontWeight: 'bold',
             color: '#f5a623', // Accent color for the title
             paddingBottom: '10px',
-          }} 
-        > 
+          }}
+        >
           Post Details
         </DialogTitle>
         <DialogContent
@@ -349,8 +353,7 @@ export default function ShopProductCard({ product }) {
         </DialogActions>
       </Dialog>
 
-
-{/* Posting Dialog */}
+      {/* Posting Dialog */}
       <Dialog
         PaperComponent={PaperComponent}
         open={openPostDialog}

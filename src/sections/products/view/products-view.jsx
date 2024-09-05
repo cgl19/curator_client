@@ -28,6 +28,10 @@ export default function ProductsView() {
     setOpenFilter(false);
   };
 
+  const filteredProducts = products.filter(
+    (product) => product.status === "posted"
+  )
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -69,17 +73,13 @@ export default function ProductsView() {
         </Stack> */}
       </Stack>
 
-      <Grid container spacing={3}>
-        {products &&
-          products
-            .slice()
-            .reverse()
-            .map((product) => (
-              <Grid item key={product._id} xs={12} sm={6} md={3}>
-                <ProductCard product={product} />
-              </Grid>
-            ))}
-      </Grid>
+    <Grid container spacing={3}>
+  {filteredProducts.map((product) => (
+    <Grid item key={product._id} xs={12} sm={6} md={3}>
+      <ProductCard product={product} />
+    </Grid>
+  ))}
+</Grid>
     </Container>
   );
 }

@@ -24,7 +24,7 @@ const navConfig = [
   // },
   
   {
-    title: 'Posts',
+    title: 'Posted',
     path: '/posts',
     icon: icon('posts'),
   },
