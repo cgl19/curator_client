@@ -62,6 +62,8 @@ export default function TikTokPostUpload() {
   const [postAccountId, setPostAccountId] = useState(null); // or useState('')
   const [isVisibilityCheck, setIsVisibilityCheck] = useState(false);
 
+  var scheduled=false;
+
   const [privacyOptions, setprivacyOptions] = useState([
     { value: 'SELF_ONLY', label: 'Private (only me)' },
     { value: 'FRIENDS', label: 'Friends' },
@@ -249,9 +251,9 @@ export default function TikTokPostUpload() {
       formData.append('interactions', JSON.stringify(interactions));
       formData.append('commercialContent', JSON.stringify(commercialContent));
       formData.append('accountId', params.account_id);
-      formData.append('isScheduled', isScheduled);
+      formData.append('isScheduled', scheduled);
 
-      if (isScheduled) {
+      if (scheduled) {
         formData.append('scheduleAt', selectedDateTime);
       }
 
@@ -263,7 +265,7 @@ export default function TikTokPostUpload() {
       toast.dismiss(uploadingToastId);
 
       if (response.status === 'success') {
-        const message = isScheduled
+        const message = scheduled
           ? `Post has been scheduled for ${selectedDateTime} ✔️`
           : 'Uploaded Successfully ✔️';
         toast.success(message);
@@ -288,8 +290,8 @@ export default function TikTokPostUpload() {
     setInteractions([]);
     setCommercialContent([]);
     setDisclosureEnabled(false);
-    setIsScheduled(false);
-    console.log(isScheduled);   
+   scheduled=false;
+   
   };
 
   //handling the route parameters
@@ -428,8 +430,8 @@ export default function TikTokPostUpload() {
   //handling scheduling post here
 
   const handleScheduleSubmit = async () => {
+    scheduled=true;
     handleCloseScheduleDialog();
-    setIsScheduled(true);
     handleSubmit();
   };
 

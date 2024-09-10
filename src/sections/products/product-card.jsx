@@ -283,7 +283,7 @@ export default function ShopProductCard({ product }) {
               border: '1px solid #f5a623',
             }}
           >
-            {`User Name: ${product?.userName.toUpperCase()}`}
+            {`User Name: ${product?.userName?.toUpperCase()}`}
           </Typography>
           <Typography
             variant="body2"
@@ -297,7 +297,7 @@ export default function ShopProductCard({ product }) {
               border: '1px solid #f5a623',
             }}
           >
-            {`Media Type: ${product?.platform.toUpperCase()}`}
+            {`Media Type: ${product?.platform?.toUpperCase()}`}
           </Typography>
           <Typography
             variant="body2"
@@ -311,7 +311,7 @@ export default function ShopProductCard({ product }) {
               border: '1px solid #f5a623',
             }}
           >
-            {`Account Title: ${product?.accountName.toUpperCase()}`}
+            {`Account Title: ${product?.accountName?.toUpperCase()}`}
           </Typography>
           <Typography
             variant="body2"
@@ -325,7 +325,7 @@ export default function ShopProductCard({ product }) {
               border: '1px solid #f5a623',
             }}
           >
-            {`Status: ${product?.status.toUpperCase()}`}
+            {`Status: ${product?.status?.toUpperCase()}`}
           </Typography>
         </DialogContent>
         <DialogActions

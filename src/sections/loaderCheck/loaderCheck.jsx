@@ -3,7 +3,7 @@ import React from 'react';
 import Button from '@mui/material/Button';
 import { useLoader } from '../../loaderContext/loaderContext';
 
-const LoaderCheck = () => {
+export default function LoaderCheck(){
   const { isLoading, showLoader, hideLoader } = useLoader();
 
   const handleLoader = () => {
@@ -21,4 +21,4 @@ const LoaderCheck = () => {
   );
 };
 
-export default LoaderCheck; 
+

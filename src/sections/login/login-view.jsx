@@ -73,7 +73,7 @@ export default function LoginView() {
           console.log(res)
           dispatch(loginSuccess(res));
           toast.success("Logged in successfully");
-          navigate('/');
+          navigate('/dashboard');
         }catch(error){
           console.log("Error: ",error)
           toast.dismiss(toastId)

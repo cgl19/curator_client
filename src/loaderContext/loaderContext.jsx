@@ -2,7 +2,7 @@
 import PropTypes from 'prop-types';
 import React, {useState,useContext , createContext} from 'react';
 
-import {LoaderPage} from '../sections/loader/view'; // Adjust the import path as needed
+// import {LoaderPage} from '../sections/loader/view'; // Adjust the import path as needed
 
 const LoaderContext = createContext();
 
@@ -11,7 +11,7 @@ export const LoaderProvider = ({ children }) => {
   return (
     <LoaderContext.Provider value={isLoading}>
       {children}
-      <LoaderPage visible={isLoading} />
+      {/* <LoaderPage visible={isLoading} /> */}
     </LoaderContext.Provider>
   );
 }; 

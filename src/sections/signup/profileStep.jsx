@@ -142,7 +142,7 @@ export default function SecondProfileStep({ email, password }) {
           dispatch(loginSuccess(res));
           setTimeout(() => {
             toast.dismiss(loginWait);
-            navigate('/');
+            navigate('/dashboard');
           }, 5000);
         } else {
           toast.error('Oops! Network error occurred while redirecting to dashboard');

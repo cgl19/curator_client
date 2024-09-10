@@ -6,17 +6,17 @@ export default function PrivacyPolicy() {
     <Box>
       <Box
         sx={{
-          background: 'linear-gradient(to right, #f8c291, #6a89cc)',
+          background: 'rgb(59,60,59)',
           textAlign: 'center',
           py: 5,
           position: 'relative',
-          color: '#fff',
+         
         }}
       >
         <Box
-          component="img"
-          src="https://img.freepik.com/free-vector/abstract-modern-halftone-design-orange-background_1055-21586.jpg?t=st=1725551122~exp=1725554722~hmac=81eeb344087c5ba7335c2a07977d879f057b8135826358398d3dc68c810d9fd5&w=996"
-          alt="background"
+          component=""
+          src=""
+          alt=""
           sx={{
             position: 'absolute',
             top: 0,
@@ -29,14 +29,14 @@ export default function PrivacyPolicy() {
         <Container>
           <Grid container justifyContent="center">
             <Grid item lg={8}>
-              <Typography variant="h1" sx={{ fontSize: 32, fontWeight: 600, mb: 1 }}>
+              <Typography variant="h1" color="white" sx={{ fontSize: 32, fontWeight: 600, mb: 1 }}>
                 Privacy Policy
               </Typography>
               <Breadcrumbs sx={{ justifyContent: 'center' }}>
-                <Link underline="hover" color="inherit" href="https://app.curator365.com">
+                <Link underline="hover" color="white" href="https://app.curator365.com">
                   Home
                 </Link>
-                <Typography color="text.primary">Privacy Policy</Typography>
+                <Typography color="white">Privacy Policy</Typography>
               </Breadcrumbs>
             </Grid>
           </Grid>

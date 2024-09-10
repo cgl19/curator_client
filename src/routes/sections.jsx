@@ -18,6 +18,7 @@ export const AddAccounts = lazy(() => import('src/pages/accounts'));
 export const ProductsPage = lazy(() => import('src/pages/products'));
 export const PrivacyPolicyPage = lazy(() => import('src/pages/privacyPolicy'));
 export const TermAndConditionPage = lazy(() => import('src/pages/termAndCondition'));
+export const HomePage = lazy(() => import('src/pages/home'));
 export const ScheduledPage = lazy(() => import('src/pages/scheduled_failed'));
 export const FaceBookPageConnection = lazy(() => import('src/pages/accountsConnection/facebookPageConnection'));
 export const FaceBookGroupConnection = lazy(() => import('src/pages/accountsConnection/facebookGroupConnection'));
@@ -44,7 +45,7 @@ export default function Router() {
         </DashboardLayout>
       ),
       children: [
-        { path: '/', element: <PrivateRoute element={<IndexPage />} /> },
+        { path: '/dashboard', element: <PrivateRoute element={<IndexPage />} /> },
         { path: 'user', element: <PrivateRoute element={<UserPage />} /> },
         { path: 'accounts', element: <PrivateRoute element={<AddAccounts />} /> },
         { path: 'posts', element: <PrivateRoute element={<ProductsPage />} /> },
@@ -58,6 +59,7 @@ export default function Router() {
         },
       ],
     },
+    { path: '/', element: <HomePage />},
     {
       path: 'login',
       element: <LoginPage />,

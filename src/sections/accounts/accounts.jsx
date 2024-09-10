@@ -128,7 +128,7 @@ const UserPage = () => {
             icon={returnAccountIconImage({ type: 'tiktok' })}
           />
         </SwiperSlide>
-        <SwiperSlide className="swiper-slide-custom">
+        {/* <SwiperSlide className="swiper-slide-custom">
           <AppWidgetAdd title="Twitter" icon={returnAccountIconImage({ type: 'twitter' })} />
         </SwiperSlide>
         <SwiperSlide className="swiper-slide-custom">
@@ -151,7 +151,7 @@ const UserPage = () => {
             title="Youtube"
             icon={returnAccountIconImage({ type: 'youtube' })}
           />
-        </SwiperSlide>
+        </SwiperSlide> */}
       </Swiper>
 
       <Typography marginTop={5} variant="h6">
@@ -194,5 +194,8 @@ const UserPage = () => {
     </Container>
   );
 };
-
 export default UserPage;
+
+
+
+
