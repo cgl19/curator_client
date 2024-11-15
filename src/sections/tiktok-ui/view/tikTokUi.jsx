@@ -74,9 +74,9 @@ export default function TikTokPostUpload() {
   const [maxVideoDuration, setmaxVideoDuration] = useState(90);
 
   const [interactionOptions, setInteractionOptions] = useState([
-    { value: 'comment', label: 'Allow Comments', status: false },
-    { value: 'duet', label: 'Allow Duet', status: false },
-    { value: 'stitch', label: 'Allow Stitch', status: false },
+    { value: 'comment', label: 'Comments', status: false },
+    { value: 'duet', label: 'Duet', status: false },
+    { value: 'stitch', label: 'Stitch', status: false },
   ]);
 
   const [commercialContentOptions, setcommercialContentOptions] = useState([
@@ -160,7 +160,6 @@ export default function TikTokPostUpload() {
 
       // Check if the response status is OK
       const responseData = await response;
-      console.log(responseData);
       if (!responseData.status) {
         // Handle non-200 responses (e.g., 400, 404, 500)
         const errorData = responseData;
@@ -178,9 +177,9 @@ export default function TikTokPostUpload() {
         setProfilePhoto(accountData.creator_avatar_url);
         setmaxVideoDuration(accountData.max_video_post_duration_sec);
         setInteractionOptions([
-          { value: 'comment', label: 'Allow Comments', status: accountData.comment_disabled },
-          { value: 'duet', label: 'Allow Duet', status: accountData.duet_disabled },
-          { value: 'stitch', label: 'Allow Stitch', status: accountData.stitch_disabled },
+          { value: 'comment', label: 'Comments', status: accountData.comment_disabled },
+          { value: 'duet', label: 'Duet', status: accountData.duet_disabled },
+          { value: 'stitch', label: 'Stitch', status: accountData.stitch_disabled },
         ]);
 
         const accountPrivacy = accountData.privacy_level_options.map((option) => ({
@@ -188,12 +187,13 @@ export default function TikTokPostUpload() {
           value: option,
         }));
         setprivacyOptions(accountPrivacy);
-      } else {
-        setIsVisibilityCheck(true);
+      } 
+      else {
+        setIsVisibilityCheck(false);
       }
     } catch (error) {
       setcheckPostAccountAvailibility({});
-      setIsVisibilityCheck(true);
+      setIsVisibilityCheck(false);
       // toast.error(`Error: ${error.message || 'An unexpected error occurred'} `);
     }
   };
@@ -304,6 +304,9 @@ export default function TikTokPostUpload() {
     fetchParams();
   }, []);
 
+
+
+
   useEffect(() => {
     if (disclosureEnabled) {
       if (
@@ -331,15 +334,7 @@ export default function TikTokPostUpload() {
               TikTok's Music Usage Confirmation
             </a>
             <br />
-            <a
-              style={{ color: 'blue', marginLeft: '2px' }}
-              href="https://curator365.com/privacy-policy"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              By posting, you agree to Curator365 Privacy Policy
-            </a>
-            .
+            
           </span>
         );
       } else if (commercialContent.includes('your_brand')) {
@@ -355,15 +350,6 @@ export default function TikTokPostUpload() {
               TikTok's Music Usage Confirmation
             </a>
             <br />
-            <a
-              style={{ color: 'blue', marginLeft: '2px' }}
-              href="https://curator365.com/privacy-policy"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              By posting, you agree to Curator365 Privacy Policy
-            </a>
-            .
           </span>
         );
       } else if (commercialContent.includes('branded_content')) {
@@ -387,16 +373,6 @@ export default function TikTokPostUpload() {
             >
               TikTok's Music Usage Confirmation
             </a>
-            <br />
-            <a
-              style={{ color: 'blue', marginLeft: '2px' }}
-              href="https://curator365.com/privacy-policy"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              By posting, you agree to Curator365 Privacy Policy
-            </a>
-            .
           </span>
         );
       }
@@ -405,6 +381,10 @@ export default function TikTokPostUpload() {
       setComplianceMessage('');
     }
   }, [disclosureEnabled, commercialContent]);
+  
+
+
+
 
   const handleDisclosureToggle = () => {
     setDisclosureEnabled((prev) => !prev);
@@ -582,7 +562,7 @@ export default function TikTokPostUpload() {
                   sx={{ color: 'rgb(24,119,242)', fontFamily: 'Sleep', fontSize: '24px' }}
                   variant="subtitle1"
                 >
-                  {accountName.toUpperCase()}
+                  {accountName?.toUpperCase()}
                 </Typography>
                 {canPost === 15 ? (
                   <span style={{ fontSize: '12px', textAlign: 'center',backgroundColor:'rgb(240,244,248)',color:'black' }}>Per day posting limit {canPost}</span>
@@ -595,11 +575,11 @@ export default function TikTokPostUpload() {
               </Stack>
 
               <Box sx={{ borderRadius: '5px' }}>
-                <Typography sx={{ fontSize: 13, marginLeft: 2 }}>
-                  Post Title <RequiredAsterisk>*</RequiredAsterisk>
+                <Typography  sx={{ fontSize: 13, marginLeft: 2 }}>
+                  Caption <RequiredAsterisk>*</RequiredAsterisk>
                 </Typography>
                 <TextField
-                  placeholder="Enter post title"
+                  placeholder="0/1000"
                   fullWidth
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
@@ -617,7 +597,7 @@ export default function TikTokPostUpload() {
 
               <FormControl fullWidth margin="normal" sx={{ borderRadius: '5px' }}>
                 <Typography sx={{ fontSize: 13, marginBottom: 2, marginLeft: 2 }}>
-                  Privacy
+                  Who can view this post
                    {/* <RequiredAsterisk>*</RequiredAsterisk> */}
                 </Typography>
                 <Select
@@ -642,79 +622,10 @@ export default function TikTokPostUpload() {
               </FormControl>
               <Divider/>
               
-
-              <FormControl fullWidth margin="normal">
-                <Box sx={{ my: 1, borderRadius: '5px', display: 'flex', alignItems: 'center' }}>
-                  <Switch checked={disclosureEnabled} onChange={handleDisclosureToggle} />
-                  <Typography sx={{ fontSize: 13 }} variant="body2" color="textSecondary">
-                    Disclose Commercial Content 
-                    {/* <RequiredAsterisk>*</RequiredAsterisk> */}
-                  </Typography>
-                </Box>
-
-                <Box sx={{ my: 1, borderRadius: '5px' }}>
-                  {commercialContentOptions.map((option) => (
-                    <FormControlLabel
-                      key={option.value}
-                      control={
-                        <Switch
-                          sx={{ fontSize: 13, marginLeft: 1 }}
-                          checked={
-                            disclosureEnabled ? commercialContent.includes(option.value) : false
-                          }
-                          onChange={(e) => {
-                            if (e.target.checked) {
-                              setCommercialContent([...commercialContent, option.value]);
-                            } else {
-                              setCommercialContent(
-                                commercialContent.filter((value) => value !== option.value)
-                              );
-                            }
-                          }}
-                          disabled={!disclosureEnabled}
-                        />
-                      }
-                      label={<span style={{ fontSize: 13 }}>{option.label}</span>}
-                    />
-                  ))}
-                </Box>
-
-                {disclosureEnabled && commercialContent.length === 0 && (
-                  <Typography variant="body2" color="error" sx={{ mt: 1, mx: 1 }}>
-                    You need to indicate if your content promotes yourself, a third party, or both.
-                  </Typography> 
-                )}  
-
-                {commercialContent.includes('your_brand') &&
-                  commercialContent.includes('branded_content') ? (
-                  <Typography variant="body2" color="textSecondary" sx={{ mt: 1, mx: 1 }}>
-                    Your photo/video will be labeled as{' '}
-                    <span style={{ color: 'rgb(24,119,242)' }}>'Paid partnership'</span>.
-                  </Typography>
-                ) : (
-                  <>
-                    {commercialContent.includes('your_brand') && (
-                      <Typography variant="body2" color="textSecondary" sx={{ mt: 1, mx: 1 }}>
-                        Your photo/video will be labeled as{' '}
-                        <span style={{ color: 'rgb(24,119,242)' }}>'Promotional content'</span>.
-                      </Typography>
-                    )}
-
-                    {commercialContent.includes('branded_content') && (
-                      <Typography variant="body2" color="textSecondary" sx={{ mt: 1, mx: 1 }}>
-                        Your photo/video will be labeled as{' '}
-                        <span style={{ color: 'rgb(24,119,242)' }}>'Paid partnership'</span>.
-                      </Typography>
-                    )}
-                  </>
-                )}
-              </FormControl>
-
-              <Divider/>
-
+             
               <Box sx={{ borderRadius: '5px' }}>
                 <InputLabel sx={{ fontSize: 13, marginLeft: 2 }}>
-                  Interactions 
+                  Allow users to 
                   {/* <RequiredAsterisk>*</RequiredAsterisk> */}
                 </InputLabel>
 
@@ -748,6 +659,111 @@ export default function TikTokPostUpload() {
                 </FormControl>
               </Box>
 
+             
+
+              <FormControl fullWidth margin="normal">
+                <Box sx={{ my: 1, borderRadius: '5px', display: 'flex', alignItems: 'center' }}>
+                  <Switch checked={disclosureEnabled} onChange={handleDisclosureToggle} />
+                  <Typography sx={{ fontSize: 13 }} variant="body2" color="textSecondary">
+                    Disclose Video Content 
+                    {/* <RequiredAsterisk>*</RequiredAsterisk> */}
+                  </Typography>
+                  
+                </Box>
+                <Box>
+                  <Typography sx={{ fontSize: 13,marginLeft:2 }} variant="body2" color="textSecondary">
+                  Turn on to disclose that this video promotes goods or services in exchange for something of value. 
+                  </Typography>
+                  <Typography sx={{ fontSize: 13,marginLeft:2 }} variant="body2" color="textSecondary">
+                  Your video could promote yourself, a third pary or both
+                  </Typography>
+
+                                {disclosureEnabled && (
+                <Typography
+                  sx={{
+                    display: 'inline-block', // Ensures the width is as wide as the content
+                    fontSize: 13,
+                    mt: 2,
+                    ml:2,
+                    bgcolor: '#a8c9ff',
+                    color: 'black', // Ensures the text is readable on a blue background
+                    padding: 1, // Adds inner spacing
+                    borderRadius: 1, // Rounds the corners
+                  }}
+                  variant="body2"
+                >
+                  Your video will be labled "Promotional Content". this cannot be changed once your video is posted
+                </Typography>
+              )}
+                </Box>
+                {disclosureEnabled && commercialContent.length === 0 && (
+                  <Typography variant="body2" color="error" sx={{ mt: 1, mx: 2  }}>
+                    You need to indicate if your content promotes yourself, a third party, or both.
+                  </Typography> 
+                )}  
+
+
+
+
+
+
+            <Box sx={{ my: 1, borderRadius: '5px' }}>
+              {commercialContentOptions.map((option, index) => (
+                <div key={option.value}>
+                  <FormControlLabel
+                    sx={{ display: 'block', my: 1 }} // Ensures each option is on a new row and adds spacing
+                    control={
+                      <Checkbox
+                        sx={{ fontSize: 13, marginLeft: 2 }}
+                        checked={
+                          disclosureEnabled ? commercialContent.includes(option.value) : false
+                        }
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            setCommercialContent([...commercialContent, option.value]);
+                          } else {
+                            setCommercialContent(
+                              commercialContent.filter((value) => value !== option.value)
+                            );
+                          }
+                        }}
+                        disabled={!disclosureEnabled}
+                      />
+                    }
+                    label={<span style={{ fontSize: 13 }}>{option.label}</span>}
+                  />
+                  {/* Conditional text display */}
+                  {index === 0 && commercialContent.includes(option.value) && (
+                    <Typography sx={{ fontSize: 13, mt: 1, ml:2, color: 'textSecondary' }}>
+                      You are promoting yourself or your own business. This video will be classified as Brand Organic.
+                    </Typography>
+                  )}
+                  {index === 1 && commercialContent.includes(option.value) && (
+                    <Typography sx={{ fontSize: 13, mt: 1,  ml:2, color: 'textSecondary' }}>
+                      You are promoting another brand or third party. This video will be classified as Branded Content.
+                    </Typography>
+                  )}
+                </div>
+              ))}
+            </Box>
+
+
+  
+  
+  {/* privacy policy and terms message */}
+
+              <Box>
+              {complianceMessage && (
+                <Typography variant="body2" color="textSecondary" sx={{ mt: 2,ml:2 }}>
+                  {complianceMessage}
+                </Typography>
+              )}
+              </Box>
+              </FormControl>
+
+              <Divider/>
+
+             
               {videoPreview && (
                 <Box
                   sx={{
@@ -791,12 +807,12 @@ export default function TikTokPostUpload() {
                       boxShadow: '2px 2px 5px 5px #b2b2b2',
                       borderRadius: 5,
                       border: '3px solid #fe2c55',
+                      width: '40px', // Use sx for width
+                      height: '40px', // Use sx for height
                     }}
                     icon="eva:upload-fill"
                     color="rgb(24,119,242)"
                     size="48px"
-                    height="40px"
-                    width="40px"
                   />
                   <Typography sx={{ fontSize: 13, my: 1 }}>
                     {videoFile ? 'Change' : 'Upload'}
@@ -807,11 +823,8 @@ export default function TikTokPostUpload() {
                 </Box>
               </CustomFileInput>
 
-              {complianceMessage && (
-                <Typography variant="body2" color="textSecondary" sx={{ mt: 2 }}>
-                  {complianceMessage}
-                </Typography>
-              )}
+
+            
 
               <Box sx={{ display: 'flex', justifyContent: 'center' }}>
                 <Button
