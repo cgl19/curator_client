@@ -43,7 +43,7 @@ export default function TikTokPostUpload() {
 
   const [open, setOpen] = useState(true);
   const [title, setTitle] = useState('');
-  const [privacy, setPrivacy] = useState('SELF_ONLY');
+  const [privacy, setPrivacy] = useState('Select Privacy Option');
   const [interactions, setInteractions] = useState([]);
   const [commercialContent, setCommercialContent] = useState([]);
   const [videoFile, setVideoFile] = useState(null);
@@ -62,10 +62,15 @@ export default function TikTokPostUpload() {
   const [postAccountId, setPostAccountId] = useState(null); // or useState('')
   const [isVisibilityCheck, setIsVisibilityCheck] = useState(false);
 
-  var scheduled=false;
 
+
+
+
+  
+  var scheduled=false;
   const [privacyOptions, setprivacyOptions] = useState([
-    { value: 'SELF_ONLY', label: 'Private (only me)' },
+    { value: 'Select Privacy Option', label: 'Select Privacy Option' },
+    { value: 'Private', label: 'Private' },
     { value: 'FRIENDS', label: 'Friends' },
     { value: 'PUBLIC', label: 'Public' },
   ]);
@@ -106,6 +111,35 @@ export default function TikTokPostUpload() {
     color: 'red',
     marginLeft: theme.spacing(0.5),
   }));
+
+
+ // Handle checkbox change
+ const handleCheckboxChange = (e, value) => {
+  if (e.target.checked) {
+    // Calculate the new state
+    const updatedCommercialContent = [...commercialContent, value];
+    setCommercialContent(updatedCommercialContent);
+    
+
+    // Use the updated state for further logic
+    if (privacy === 'Private' && updatedCommercialContent.includes('branded_content')) {
+      setCommercialContent((prev) => prev.filter((option) => option == 'branded_content'));
+      alert(
+        'Branded Content visibility cannot be set to private. Your privacy setting will be automatically switched to Public.'
+      );
+      setPrivacy('PUBLIC');
+    }
+    else if( privacy=='Select Privacy Option' && updatedCommercialContent.includes('branded_content')){
+      alert('Branded Content visibility cannot be set to Select Privacy Option. Your privacy setting will be automatically switched to Public.')
+      setPrivacy('PUBLIC');
+    }
+  } 
+  else {
+    setCommercialContent((prev) => prev.filter((item) => item !== value));
+  }
+};
+
+
 
   const handleFileChange = (event) => {
     const file = event.target.files[0];
@@ -186,14 +220,14 @@ export default function TikTokPostUpload() {
           label: option,
           value: option,
         }));
-        setprivacyOptions(accountPrivacy);
+        //setprivacyOptions(accountPrivacy);
       } 
-      else {
-        setIsVisibilityCheck(false);
+      else { 
+        setIsVisibilityCheck(true);
       }
     } catch (error) {
       setcheckPostAccountAvailibility({});
-      setIsVisibilityCheck(false);
+      setIsVisibilityCheck(true);
       // toast.error(`Error: ${error.message || 'An unexpected error occurred'} `);
     }
   };
@@ -213,7 +247,7 @@ export default function TikTokPostUpload() {
         return;
       }
 
-      if (privacy === 'SELF_ONLY' && commercialContent.includes('branded_content')) {
+      if (privacy === 'Private' && commercialContent.includes('branded_content')) {
         toast('Branded Content cannot be private 🔒');
         return;
       }
@@ -395,14 +429,17 @@ export default function TikTokPostUpload() {
   };
 
   const handlePrivacyChange = (event) => {
-    const newPrivacy = event.target.value;
-    if (newPrivacy === 'SELF_ONLY' && commercialContent.includes('branded_content')) {
+   
+    const newPrivacy = event.target.innerText;
+    
+    if (newPrivacy == 'Private' && commercialContent.includes('branded_content')) {
       setCommercialContent((prev) => prev.filter((option) => option !== 'branded_content'));
       alert(
         'Branded Content visibility cannot be set to private. Your privacy setting will be automatically switched to Public.'
       );
       setPrivacy('PUBLIC');
-    } else {
+    } 
+    else {
       setPrivacy(newPrivacy);
     }
   };
@@ -476,46 +513,11 @@ export default function TikTokPostUpload() {
         </Dialog>
       </div>
 
-      {/* <Dialog
-      PaperComponent={PaperComponent}
-      open={openScheduleDialogue}
-      onClose={handleCloseScheduleDialog}
-      maxWidth="sm"
-      fullWidth
-    >
-      <DialogTitle
-        sx={{
-          textAlign: 'center',
-          fontSize: '1.25rem',
-          fontWeight: 'bold',
-        }}
-      >
-        Schedule for Future
-      </DialogTitle>
-      <DialogContent>
-      <BasicDatePicker/>
-      </DialogContent>
-      <DialogActions>
-        <Button
-          onClick={handleCloseScheduleDialog}
-          color="primary"
-          sx={{ fontSize: '0.875rem' }}
-        >
-          Close
-        </Button>
-        <Button
-          onClick={handleScheduleSubmit}
-          color="primary"
-          variant="contained"
-          sx={{ fontSize: '0.875rem' }}
-        >
-          Submit
-        </Button>
-      </DialogActions>
-    </Dialog> */}
+     
 
-      {/* Dialog to handle the schedule Dialog */}
+     
       <Typography variant="h4">Post to TikTok</Typography>
+      
       <Box
         sx={{
           display: 'flex',
@@ -593,8 +595,21 @@ export default function TikTokPostUpload() {
                 />
               </Box>
 
-              <Divider/>
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+              <Divider/>
               <FormControl fullWidth margin="normal" sx={{ borderRadius: '5px' }}>
                 <Typography sx={{ fontSize: 13, marginBottom: 2, marginLeft: 2 }}>
                   Who can view this post
@@ -602,7 +617,7 @@ export default function TikTokPostUpload() {
                 </Typography>
                 <Select
                   value={privacy}
-                  onChange={handlePrivacyChange}
+                  onClick={handlePrivacyChange}
                   fullWidth
                   sx={{ border: '3px solid whitesmoke' }}
                   renderValue={(selectedValue) => (
@@ -617,12 +632,29 @@ export default function TikTokPostUpload() {
                     >
                       {option.label}
                     </MenuItem>
-                  ))}
+                  ))
+                  }
                 </Select>
               </FormControl>
               <Divider/>
               
              
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
               <Box sx={{ borderRadius: '5px' }}>
                 <InputLabel sx={{ fontSize: 13, marginLeft: 2 }}>
                   Allow users to 
@@ -670,15 +702,14 @@ export default function TikTokPostUpload() {
                   </Typography>
                   
                 </Box>
-                <Box>
+                <Box>   
                   <Typography sx={{ fontSize: 13,marginLeft:2 }} variant="body2" color="textSecondary">
                   Turn on to disclose that this video promotes goods or services in exchange for something of value. 
                   </Typography>
                   <Typography sx={{ fontSize: 13,marginLeft:2 }} variant="body2" color="textSecondary">
                   Your video could promote yourself, a third pary or both
                   </Typography>
-
-                                {disclosureEnabled && (
+                {disclosureEnabled && (
                 <Typography
                   sx={{
                     display: 'inline-block', // Ensures the width is as wide as the content
@@ -691,16 +722,18 @@ export default function TikTokPostUpload() {
                     borderRadius: 1, // Rounds the corners
                   }}
                   variant="body2"
-                >
+                > 
                   Your video will be labled "Promotional Content". this cannot be changed once your video is posted
                 </Typography>
               )}
-                </Box>
+                </Box>  
                 {disclosureEnabled && commercialContent.length === 0 && (
                   <Typography variant="body2" color="error" sx={{ mt: 1, mx: 2  }}>
                     You need to indicate if your content promotes yourself, a third party, or both.
                   </Typography> 
                 )}  
+
+
 
 
 
@@ -718,15 +751,8 @@ export default function TikTokPostUpload() {
                         checked={
                           disclosureEnabled ? commercialContent.includes(option.value) : false
                         }
-                        onChange={(e) => {
-                          if (e.target.checked) {
-                            setCommercialContent([...commercialContent, option.value]);
-                          } else {
-                            setCommercialContent(
-                              commercialContent.filter((value) => value !== option.value)
-                            );
-                          }
-                        }}
+                        onChange={(e) => handleCheckboxChange(e, option.value)}
+                      
                         disabled={!disclosureEnabled}
                       />
                     }
@@ -829,7 +855,7 @@ export default function TikTokPostUpload() {
               <Box sx={{ display: 'flex', justifyContent: 'center' }}>
                 <Button
                   variant="contained"
-                  sx={{
+                  sx={{ 
                     color: 'white',
                     bgcolor: '#1877f2',
                     marginBottom: '15px',

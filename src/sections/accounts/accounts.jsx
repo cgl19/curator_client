@@ -82,7 +82,6 @@ const UserPage = () => {
     if (platform.toLowerCase().includes('tiktok')) {
       navigate(`/tiktok/postupload/${platform}/${account_id}`);
     }
-    toast('Waiting for platform resource...');
     return;
   };
 
